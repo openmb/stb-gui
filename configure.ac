@@ -169,6 +169,7 @@ data/rc_models/et9500/Makefile
 data/rc_models/et9x00/Makefile
 data/rc_models/vu/Makefile
 data/rc_models/xp1000/Makefile
+data/rc_models/miraclebox/Makefile
 data/skin_default/Makefile
 data/skin_default/menu/Makefile
 data/skin_default/icons/Makefile

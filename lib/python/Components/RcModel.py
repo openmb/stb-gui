@@ -8,6 +8,7 @@ class RcModel:
 	RCTYPE_VU = 4
 	RCTYPE_ET4X00 = 5
 	RCTYPE_XP1000 = 6
+	RCTYPE_MIRACLEBOX = 6
 
 	def __init__(self):
 		self.currentRcType = self.RCTYPE_DMM
@@ -45,7 +46,9 @@ class RcModel:
 					self.currentRcType = self.RCTYPE_ET4X00
 				elif rc == '14':
 					self.currentRcType = self.RCTYPE_XP1000
-
+			elif model == 'ini-1000sv' or model == 'ini-5000sv' or model == 'ini-9000sv':
+				self.currentRcType = self.RCTYPE_MIRACLEBOX
+				
 		elif os.path.exists('/proc/stb/info/vumodel'):
 			self.currentRcType = self.RCTYPE_VU
 
@@ -60,6 +63,8 @@ class RcModel:
 			return '/usr/share/enigma2/rc_models/et4x00/'
 		elif self.currentRcType == self.RCTYPE_XP1000:
 			return '/usr/share/enigma2/rc_models/xp1000/'
+		elif self.currentRcType == self.RCTYPE_MIRACLEBOX:
+			return '/usr/share/enigma2/rc_models/miraclebox/'      
 		elif self.currentRcType == self.RCTYPE_VU:
 			return '/usr/share/enigma2/rc_models/vu/'
 
