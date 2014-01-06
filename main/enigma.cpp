@@ -197,6 +197,35 @@ int main(int argc, char **argv)
 	dsk.setRedrawTask(main);
 	dsk_lcd.setRedrawTask(main);
 	
+	eDebug("Checking box...");
+	
+	FILE *infile;
+	char line[100];
+	char cmd[10]= "reboot";
+
+	if((infile = fopen("/proc/stb/info/boxtype", "r")) != NULL)
+	{
+		fgets(line, sizeof(line), infile);
+	    
+		if(strcmp(line, "ini-5000sv\n") == 0) 
+		{
+			eDebug("Miraclebox Premium Twin detected");
+		}
+		else if(strcmp(line, "ini-1000sv\n") == 0) 
+		{
+			eDebug("Miraclebox PremiumMini detected");
+		}
+		else if(strcmp(line, "ini-9000sv\n") == 0) 
+		{
+			eDebug("Miraclebox Premium Quad detected");
+		}  
+		else
+		{
+			eDebug("Wrong HW, this image can be only run on Miraclbox Premium Series");
+			system(cmd);
+		}
+		fclose(infile);
+	}
 	
 	eDebug("Loading spinners...");
 	
