@@ -13,9 +13,17 @@ from enigma import eTimer
 class About(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
-
-
-		AboutText = _("Hardware: ") + about.getHardwareTypeString() + "\n"
+		
+		hwname = ""
+		if about.getHardwareTypeString() == "INI-5000SV":
+		    hwname = "MB Premium Twin HD"
+		    AboutText = _("Hardware: ") + hwname + "\n"
+		elif about.getHardwareTypeString() == "INI-1000SV":
+		    hwname = "MB Premium Mini HD"
+		    AboutText = _("Hardware: ") + hwname + "\n"    
+		else:
+		    AboutText = _("Hardware: ") + about.getHardwareTypeString() + "\n"
+		    
 		AboutText += _("Image: ") + about.getImageTypeString() + "\n"
 		AboutText += _("Kernel version: ") + about.getKernelVersionString() + "\n"
 
