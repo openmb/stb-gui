@@ -48,6 +48,9 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 				"showMovies": (self.showMovies, _("Play recorded movies...")),
 				"showRadio": (self.showRadio, _("Show the radio player...")),
 				"showTv": (self.showTv, _("Show the tv player...")),
+				"showPluginBrowser": (self.showPluginBrowser, _("Go to Plug-ins")),
+				"openSleepTimer": (self.openSleepTimer, _("Show/Add Sleep Timers")),
+				"openBouquetList": (self.openBouquetList, _("Show Favorite Lists")),
 			}, prio=2)
 		
 		self.allowPiP = True
@@ -131,6 +134,18 @@ class InfoBar(InfoBarBase, InfoBarShowHide,
 		else:
 			self.session.open(MoviePlayer, service, slist = self.servicelist, lastservice = ref)
 
+	def openSleepTimer(self):
+		from Screens.SleepTimerEdit import SleepTimerEdit
+		self.session.open(SleepTimerEdit)
+
+	def showPluginBrowser(self):
+		from Screens.PluginBrowser import PluginBrowser
+		self.session.open(PluginBrowser)
+		
+	def openBouquetList(self):
+		self.showTvChannelList(True)
+		self.servicelist.showFavourites()
+			
 class MoviePlayer(InfoBarBase, InfoBarShowHide, \
 		InfoBarMenu, \
 		InfoBarSeek, InfoBarShowMovies, InfoBarInstantRecord, InfoBarAudioSelection, HelpableScreen, InfoBarNotifications,
