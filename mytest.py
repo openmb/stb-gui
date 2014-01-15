@@ -481,6 +481,10 @@ def runScreenTest():
 	profile("Init:PowerKey")
 	power = PowerKey(session)
 
+	profile("VFDSYMBOLS")
+	import Components.VfdSymbols
+	Components.VfdSymbols.SymbolsCheck(session)
+		
 	# we need session.scart to access it from within menu.xml
 	session.scart = AutoScartControl(session)
 
