@@ -59,10 +59,9 @@ class InstallWizard(Screen, ConfigListScreen):
 			self.softcam_type = ConfigSelection(choices = modes, default = "mgcamd")
 			self.createMenu()
 		elif self.index == self.STATE_RUN_SOFTCAM:
-			self.softcam = CamControl('softcam')
-			softcams = self.softcam.getList()
-			self.softcams = ConfigSelection(choices = softcams)
-			self.softcams.value = self.softcam.current()
+			#OpenMB - dirty CODE
+			modes = {"mgcamd": " "}
+			self.softcams = ConfigSelection(choices = modes, default = "mgcamd")
 			self.createMenu()
 
 	def checkNetworkCB(self, data):
@@ -96,7 +95,10 @@ class InstallWizard(Screen, ConfigListScreen):
 			if self.enabled.value:
 				self.list.append(getConfigListEntry(_("Softcam type"), self.softcam_type))
 		elif self.index == self.STATE_RUN_SOFTCAM:
-			self.list.append(getConfigListEntry(_("Run Softcam ( LEFT / RIGHT )"), self.softcams))
+			self.softcam = CamControl('softcam')
+			softcams = self.softcam.getList()
+			for scam in softcams:  
+				self.list.append(getConfigListEntry(_(scam), self.softcams))
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
 
@@ -123,10 +125,14 @@ class InstallWizard(Screen, ConfigListScreen):
 		elif self.index == self.STATE_RUN_SOFTCAM:
 			self.runSoftCam()
 		return
-## OpenMB
+## OpenMB    
 	def runSoftCam(self):
+		try:
+			current = self["config"].getCurrent()[0]
+		except:
+			current = "None"
 		self.softcam.command('stop')
-		self.softcam.select(self.softcams.value)
+		self.softcam.select(str(current))
 		self.softcam.command('start')
 		
 class InstallWizardIpkgUpdater(Screen):
