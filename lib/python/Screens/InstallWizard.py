@@ -1,23 +1,27 @@
 from Screens.Screen import Screen
+from Screens.MessageBox import MessageBox
 from Components.ConfigList import ConfigListScreen, ConfigList
 from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
 from Components.config import config, ConfigSubsection, ConfigBoolean, getConfigListEntry, ConfigSelection, ConfigYesNo, ConfigIP
 from Components.Network import iNetwork
 from Components.Ipkg import IpkgComponent
-from enigma import eDVBDB
+from enigma import eDVBDB, eTimer
 
 config.misc.installwizard = ConfigSubsection()
 config.misc.installwizard.hasnetwork = ConfigBoolean(default = False)
 config.misc.installwizard.ipkgloaded = ConfigBoolean(default = False)
 config.misc.installwizard.channellistdownloaded = ConfigBoolean(default = False)
 
+#OpenMB
+from Plugins.PLi.SoftcamSetup.camcontrol import CamControl
 
 class InstallWizard(Screen, ConfigListScreen):
 
 	STATE_UPDATE = 0
 	STATE_CHOISE_CHANNELLIST = 1
 	STATE_CHOISE_SOFTCAM = 2
+	STATE_RUN_SOFTCAM = 3
 	
 	def __init__(self, session, args = None):
 		Screen.__init__(self, session)
@@ -54,6 +58,12 @@ class InstallWizard(Screen, ConfigListScreen):
 			modes = {"mgcamd": _("default") + " (MGCamd)", "cccam": "CCam", "scam": "scam"}
 			self.softcam_type = ConfigSelection(choices = modes, default = "mgcamd")
 			self.createMenu()
+		elif self.index == self.STATE_RUN_SOFTCAM:
+			self.softcam = CamControl('softcam')
+			softcams = self.softcam.getList()
+			self.softcams = ConfigSelection(choices = softcams)
+			self.softcams.value = self.softcam.current()
+			self.createMenu()
 
 	def checkNetworkCB(self, data):
 		if data < 3:
@@ -85,6 +95,8 @@ class InstallWizard(Screen, ConfigListScreen):
 			self.list.append(getConfigListEntry(_("Install softcam"), self.enabled))
 			if self.enabled.value:
 				self.list.append(getConfigListEntry(_("Softcam type"), self.softcam_type))
+		elif self.index == self.STATE_RUN_SOFTCAM:
+			self.list.append(getConfigListEntry(_("Run Softcam ( LEFT / RIGHT )"), self.softcams))
 		self["config"].list = self.list
 		self["config"].l.setList(self.list)
 
@@ -108,9 +120,15 @@ class InstallWizard(Screen, ConfigListScreen):
 			self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading channel list)'), IpkgComponent.CMD_REMOVE, {'package': 'enigma2-plugin-settings-henksat-' + self.channellist_type.value})
 		elif self.index == self.STATE_CHOISE_SOFTCAM and self.enabled.value:
 			self.session.open(InstallWizardIpkgUpdater, self.index, _('Please wait (downloading softcam)'), IpkgComponent.CMD_INSTALL, {'package': 'enigma2-plugin-softcams-' + self.softcam_type.value})
+		elif self.index == self.STATE_RUN_SOFTCAM:
+			self.runSoftCam()
 		return
-
-
+## OpenMB
+	def runSoftCam(self):
+		self.softcam.command('stop')
+		self.softcam.select(self.softcams.value)
+		self.softcam.command('start')
+		
 class InstallWizardIpkgUpdater(Screen):
 	skin = """
 	<screen position="c-300,c-25" size="600,50" title=" ">
