@@ -177,8 +177,8 @@ self.selectKey("RIGHT")
 			<config screen="InstallWizard" module="InstallWizard" args="3" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
-self.selectKey("LEFT")
-self.selectKey("RIGHT")
+self.selectKey("UP")
+self.selectKey("DOWN")
 			</code>
 		</step>
 		<step id="end" laststep="true">
