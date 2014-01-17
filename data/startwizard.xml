@@ -173,7 +173,7 @@ self.selectKey("RIGHT")
 			</code>
 		      </step>-->
 		<step id="softcam">
-			<text value="Which softcam would You like to start?" />
+			<text value="Which softcam would You like to use?" />
 			<config screen="InstallWizard" module="InstallWizard" args="3" type="ConfigList" />
 			<code>
 self.clearSelectedKeys()
