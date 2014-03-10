@@ -1,6 +1,7 @@
 import sys
 import os
 import time
+from Tools.HardwareInfo import HardwareInfo
 
 def getVersionString():
 	return getImageVersionString()
@@ -44,7 +45,7 @@ def getHardwareTypeString():
 	except:
 		pass
 	return "Unavailable"
-
+      
 def getImageTypeString():
 	try:
 		return open("/etc/issue").readlines()[-2].capitalize().strip()[:-6]
