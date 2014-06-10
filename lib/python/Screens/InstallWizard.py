@@ -22,7 +22,7 @@ class InstallWizard(Screen, ConfigListScreen):
 	STATE_CHOISE_CHANNELLIST = 1
 	STATE_CHOISE_SOFTCAM = 2
 	STATE_RUN_SOFTCAM = 3
-	
+
 	def __init__(self, session, args = None):
 		Screen.__init__(self, session)
 
@@ -150,7 +150,7 @@ class InstallWizardIpkgUpdater(Screen):
 		self.pkg = pkg
 		self.index = index
 		self.state = 0
-		
+
 		self.ipkg = IpkgComponent()
 		self.ipkg.addCallback(self.ipkgCallback)
 
