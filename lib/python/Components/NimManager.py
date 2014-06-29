@@ -4,7 +4,7 @@ from Tools.BoundFunction import boundFunction
 from Components.About import about
 from config import config, ConfigSubsection, ConfigSelection, ConfigFloat, \
 	ConfigSatlist, ConfigYesNo, ConfigInteger, ConfigSubList, ConfigNothing, \
-	ConfigSubDict, ConfigOnOff, ConfigDateTime
+	ConfigSubDict, ConfigOnOff, ConfigDateTime, ConfigText
 
 from enigma import eDVBSatelliteEquipmentControl as secClass, \
 	eDVBSatelliteLNBParameters as lnbParam, \
@@ -61,7 +61,8 @@ class SecConfigure:
 		sec.setCommandOrder(0)
 
 		#user values
-		sec.setDiSEqCMode(diseqcmode)
+
+		sec.setDiSEqCMode(3 if diseqcmode == 4 else diseqcmode)
 		sec.setToneburst(toneburstmode)
 		sec.setCommittedCommand(diseqcpos)
 		sec.setUncommittedCommand(0) # SENDNO
@@ -78,7 +79,7 @@ class SecConfigure:
 			else:
 				sec.setVoltageMode(switchParam._14V)
 				sec.setToneMode(switchParam.OFF)
-		elif (diseqcmode == 3): # diseqc 1.2
+		elif 3 <= diseqcmode < 5: # diseqc 1.2
 			if self.satposdepends.has_key(slotid):
 				for slot in self.satposdepends[slotid]:
 					tunermask |= (1 << slot)
@@ -89,8 +90,14 @@ class SecConfigure:
 			sec.setUseInputpower(useInputPower)
 			sec.setInputpowerDelta(inputPowerDelta)
 			sec.setRotorTurningSpeed(turningSpeed)
-
-			for x in self.NimManager.satList:
+			user_satList = self.NimManager.satList
+			if diseqcmode == 4:
+				user_satList = []
+				if orbpos and isinstance(orbpos, str):
+					for user_sat in self.NimManager.satList:
+						if str(user_sat[0]) in orbpos:
+							user_satList.append(user_sat)
+			for x in user_satList:
 				print "Add sat " + str(x[0])
 				self.addSatellite(sec, int(x[0]))
 				if diseqc13V:
@@ -223,7 +230,12 @@ class SecConfigure:
 							self.addLNBSimple(sec, slotid = x, orbpos = nim.diseqcB.orbital_position, toneburstmode = diseqcParam.NO, diseqcmode = diseqcParam.V1_0, diseqcpos = diseqcParam.AB, fastDiSEqC = fastDiSEqC, setVoltageTone = setVoltageTone, diseqc13V = nim.diseqc13V.value)
 							self.addLNBSimple(sec, slotid = x, orbpos = nim.diseqcC.orbital_position, toneburstmode = diseqcParam.NO, diseqcmode = diseqcParam.V1_0, diseqcpos = diseqcParam.BA, fastDiSEqC = fastDiSEqC, setVoltageTone = setVoltageTone, diseqc13V = nim.diseqc13V.value)
 							self.addLNBSimple(sec, slotid = x, orbpos = nim.diseqcD.orbital_position, toneburstmode = diseqcParam.NO, diseqcmode = diseqcParam.V1_0, diseqcpos = diseqcParam.BB, fastDiSEqC = fastDiSEqC, setVoltageTone = setVoltageTone, diseqc13V = nim.diseqc13V.value)
-						elif nim.diseqcMode.value == "positioner":		#Positioner
+						elif nim.diseqcMode.value in ("positioner", "positioner_select"):		#Positioner
+							current_mode = 3
+							sat = 0
+							if nim.diseqcMode.value == "positioner_select":
+								current_mode = 4
+								sat = nim.userSatellitesList.value
 							if nim.latitudeOrientation.value == "north":
 								laValue = rotorParam.NORTH
 							else:
@@ -245,7 +257,8 @@ class SecConfigure:
 									end_time = localtime(nim.fastTurningEnd.getValue())
 									turning_speed = ((beg_time.tm_hour+1) * 60 + beg_time.tm_min + 1) << 16
 									turning_speed |= (end_time.tm_hour+1) * 60 + end_time.tm_min + 1
-							self.addLNBSimple(sec, slotid = x, diseqcmode = 3,
+							self.addLNBSimple(sec, slotid = x, diseqcmode = current_mode,
+								orbpos = sat,
 								longitude = nim.longitude.float,
 								loDirection = loValue,
 								latitude = nim.latitude.float,
@@ -274,7 +287,7 @@ class SecConfigure:
 			pass
 
 		lnbSat = {}
-		for x in range(1, 69):
+		for x in range(1, 71):
 			lnbSat[x] = []
 
 		#wildcard for all satellites ( for rotor )
@@ -285,13 +298,22 @@ class SecConfigure:
 					print "add", x[0], "to", lnb
 					lnbSat[lnb].append(x[0])
 
+		#wildcard for user satellites ( for rotor )
+		for x in range(3605, 3607):
+			lnb = int(config.Nims[slotid].advanced.sat[x].lnb.value)
+			if lnb != 0:
+				for user_sat in self.NimManager.satList:
+					if str(user_sat[0]) in config.Nims[slotid].advanced.sat[x].userSatellitesList.value:
+						print "add", user_sat[0], "to", lnb
+						lnbSat[lnb].append(user_sat[0])
+
 		for x in self.NimManager.satList:
 			lnb = int(config.Nims[slotid].advanced.sat[x[0]].lnb.getValue())
 			if lnb != 0:
 				print "add", x[0], "to", lnb
 				lnbSat[lnb].append(x[0])
 
-		for x in range(1, 69):
+		for x in range(1, 71):
 			if len(lnbSat[x]) > 0:
 				currLnb = config.Nims[slotid].advanced.lnb[x]
 				sec.addLNB()
@@ -466,7 +488,7 @@ class SecConfigure:
 				for y in lnbSat[x]:
 					self.addSatellite(sec, y)
 					if x > 64:
-						satpos = x > 64 and (3604-(68 - x)) or y
+						satpos = x > 64 and (3606-(70 - x)) or y
 					else:
 						satpos = y
 					currSat = config.Nims[slotid].advanced.sat[satpos]
@@ -768,14 +790,15 @@ class NimManager:
 			elif line.startswith("Frontend_Device:"):
 				input = int(line[len("Frontend_Device:") + 1:])
 				entries[current_slot]["frontend_device"] = input
-			elif line.startswith("Mode"):
-				# "Mode 1: DVB-T" -> ["Mode 1", "DVB-T"]
-				split = line.split(":")
-				split[1] = split[1].replace(' ','')
-				split2 = split[0].split(" ")
-				modes = entries[current_slot].get("multi_type", {})
-				modes[split2[1]] = split[1]
-				entries[current_slot]["multi_type"] = modes
+			elif  line.startswith("Mode"):
+				# "Mode 0: DVB-T" -> ["Mode 0", "DVB-T"]
+				split = line.split(": ")
+				if len(split) > 1 and split[1]:
+					# "Mode 0" -> ["Mode", "0"]
+					split2 = split[0].split(" ")
+					modes = entries[current_slot].get("multi_type", {})
+					modes[split2[1]] = split[1].strip()
+					entries[current_slot]["multi_type"] = modes
 			elif line.startswith("I2C_Device:"):
 				input = int(line[len("I2C_Device:") + 1:])
 				entries[current_slot]["i2c"] = input
@@ -899,10 +922,10 @@ class NimManager:
 		positionerList = []
 		for nim in nimList[:]:
 			mode = self.getNimConfig(nim)
-			nimHaveRotor = mode.configMode.getValue() == "simple" and mode.diseqcMode.getValue() == "positioner"
-			if not nimHaveRotor and mode.configMode.getValue() == "advanced":
-				for x in range(3601, 3605):
-					lnb = int(mode.advanced.sat[x].lnb.getValue())
+			nimHaveRotor = mode.configMode.value == "simple" and mode.diseqcMode.value  in ("positioner", "positioner_select")
+			if not nimHaveRotor and mode.configMode.value == "advanced":
+				for x in range(3601, 3607):
+					lnb = int(mode.advanced.sat[x].lnb.value)
 					if lnb != 0:
 						nimHaveRotor = True
 						break
@@ -987,6 +1010,10 @@ class NimManager:
 				if dm == "positioner":
 					for x in self.satList:
 						list.append(x)
+				if dm == "positioner_select":
+					for x in self.satList:
+						if str(x[0]) in nim.userSatellitesList.value:
+							list.append(x)
 			elif configMode == "advanced":
 				for x in range(3601, 3605):
 					if int(nim.advanced.sat[x].lnb.getValue()) != 0:
@@ -996,6 +1023,11 @@ class NimManager:
 					for x in self.satList:
 						if int(nim.advanced.sat[x[0]].lnb.getValue()) != 0:
 							list.append(x)
+				for x in range(3605, 3607):
+					if int(nim.advanced.sat[x].lnb.value) != 0:
+						for user_sat in self.satList:
+							if str(user_sat[0]) in nim.advanced.sat[x].userSatellitesList.value and user_sat not in list:
+								list.append(user_sat)
 		return list
 
 	def getRotorSatListForNim(self, slotid):
@@ -1003,14 +1035,18 @@ class NimManager:
 		if self.nim_slots[slotid].isCompatible("DVB-S"):
 			#print "slotid:", slotid
 			#print "self.satellites:", self.satList[config.Nims[slotid].diseqcA.value]
-			#print "diseqcA:", config.Nims[slotid].diseqcA.getValue()
-			configMode = config.Nims[slotid].configMode.getValue()
+			#print "diseqcA:", config.Nims[slotid].diseqcA.value
+			nim = config.Nims[slotid]
+			configMode = nim.configMode.value
 			if configMode == "simple":
-				if config.Nims[slotid].diseqcMode.getValue() == "positioner":
+				if nim.diseqcMode.value == "positioner":
 					for x in self.satList:
 						list.append(x)
+				elif nim.diseqcMode.value == "positioner_select":
+					for x in self.satList:
+						if str(x[0]) in nim.userSatellitesList.value:
+							list.append(x)
 			elif configMode == "advanced":
-				nim = config.Nims[slotid]
 				for x in range(3601, 3605):
 					if int(nim.advanced.sat[x].lnb.getValue()) != 0:
 						for x in self.satList:
@@ -1022,6 +1058,11 @@ class NimManager:
 							lnb = nim.advanced.lnb[lnbnum]
 							if lnb.diseqcMode.getValue() == "1_2":
 								list.append(x)
+				for x in range(3605, 3607):
+					if int(nim.advanced.sat[x].lnb.value) != 0:
+						for user_sat in self.satList:
+							if str(user_sat[0]) in nim.advanced.sat[x].userSatellitesList.value and user_sat not in list:
+								list.append(user_sat)
 		return list
 
 def InitSecParams():
@@ -1213,7 +1254,7 @@ def InitNimManager(nimmgr):
 	diseqc_mode_choices = [
 		("single", _("Single")), ("toneburst_a_b", _("Toneburst A/B")),
 		("diseqc_a_b", "DiSEqC A/B"), ("diseqc_a_b_c_d", "DiSEqC A/B/C/D"),
-		("positioner", _("Positioner"))]
+		("positioner", _("Positioner")), ("positioner_select", _("Positioner (selecting satellites)"))]
 
 	positioner_mode_choices = [("usals", _("USALS")), ("manual", _("manual"))]
 
@@ -1225,7 +1266,7 @@ def InitNimManager(nimmgr):
 
 	advanced_satlist_choices = nimmgr.satList + [
 		(3601, _('All satellites 1 (USALS)'), 1), (3602, _('All satellites 2 (USALS)'), 1),
-		(3603, _('All satellites 3 (USALS)'), 1), (3604, _('All satellites 4 (USALS)'), 1)]
+		(3603, _('All satellites 3 (USALS)'), 1), (3604, _('All satellites 4 (USALS)'), 1), (3605, _('Selecting satellites 1 (USALS)'), 1), (3606, _('Selecting satellites 2 (USALS)'), 1)]
 	advanced_lnb_choices = [("0", _("not configured"))] + [(str(y), "LNB " + str(y)) for y in range(1, 65)]
 	advanced_voltage_choices = [("polarization", _("Polarization")), ("13V", _("13 V")), ("18V", _("18 V"))]
 	advanced_tonemode_choices = [("band", _("Band")), ("on", _("On")), ("off", _("Off"))]
@@ -1405,11 +1446,12 @@ def InitNimManager(nimmgr):
 				lnb.addNotifier(configLNBChanged, initial_call = False)
 				tmp.lnb = lnb
 				nim.advanced.sat[x[0]] = tmp
-			for x in range(3601, 3605):
+			for x in range(3601, 3607):
 				tmp = ConfigSubsection()
 				tmp.voltage = ConfigSelection(advanced_voltage_choices, "polarization")
 				tmp.tonemode = ConfigSelection(advanced_tonemode_choices, "band")
 				tmp.usals = ConfigYesNo(default=True)
+				tmp.userSatellitesList = ConfigText('[]')
 				tmp.rotorposition = ConfigInteger(default=1, limits=(1, 255))
 				lnbnum = 65+x-3601
 				lnb = ConfigSelection([("0", _("not configured")), (str(lnbnum), "LNB %d"%(lnbnum))], "0")
@@ -1444,6 +1486,8 @@ def InitNimManager(nimmgr):
 			nim.diseqcC = ConfigSatlist(list = diseqc_satlist_choices)
 			nim.diseqcD = ConfigSatlist(list = diseqc_satlist_choices)
 			nim.positionerMode = ConfigSelection(positioner_mode_choices, "usals")
+			nim.userSatellitesList = ConfigText('[]')
+			nim.pressOKtoList = ConfigNothing()
 			nim.longitude = ConfigFloat(default=[5,100], limits=[(0,359),(0,999)])
 			nim.longitudeOrientation = ConfigSelection(longitude_orientation_choices, "east")
 			nim.latitude = ConfigFloat(default=[50,767], limits=[(0,359),(0,999)])
