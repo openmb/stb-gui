@@ -3081,6 +3081,7 @@ class InfoBarPowersaver:
 		self.inactivityTimer.callback.append(self.inactivityTimeout)
 		self.restartInactiveTimer()
 		self.sleepTimer = eTimer()
+		self.sleepStartTime = 0
 		self.sleepTimer.callback.append(self.sleepTimerTimeout)
 		eActionMap.getInstance().bindAction('', -maxint - 1, self.keypress)
 
@@ -3121,13 +3122,18 @@ class InfoBarPowersaver:
 		else:
 			print "[InfoBarPowersaver] abort"
 
-	def setSleepTimer(self, time):
-		print "[InfoBarPowersaver] set sleeptimer", time
-		if time:
-			message = _("And will put your receiver in standby over ")
-			m = abs(time / 60)
-			message = _("The sleep timer has been activated.") + "\n" + message + ngettext("%d minute", "%d minutes", m) % m
-			self.sleepTimer.startLongTimer(time)
+	def sleepTimerState(self):
+		if self.sleepTimer.isActive():
+			return (self.sleepStartTime - time()) / 60
+		return 0
+
+	def setSleepTimer(self, sleepTime):
+		print "[InfoBarPowersaver] set sleeptimer", sleepTime
+		if sleepTime:
+			m = abs(sleepTime / 60)
+			message = _("The sleep timer has been activated.") + "\n" + _("And will put your receiver in standby over ") + ngettext("%d minute", "%d minutes", m) % m
+			self.sleepTimer.startLongTimer(sleepTime)
+			self.sleepStartTime = time() + sleepTime
 		else:
 			message = _("The sleep timer has been disabled.")
 			self.sleepTimer.stop()
