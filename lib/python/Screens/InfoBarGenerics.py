@@ -1612,6 +1612,7 @@ class InfoBarTimeshiftState(InfoBarPVRState):
 		self.timeshiftLiveScreen.hide()
 		self.__hideTimer = eTimer()
 		self.__hideTimer.callback.append(self.__hideTimeshiftState)
+		self.onFirstExecBegin.append(self.pvrStateDialog.show)
 
 	def _mayShow(self):
 		if self.timeshiftEnabled():
