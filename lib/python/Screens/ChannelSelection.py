@@ -366,7 +366,7 @@ class ChannelContextMenu(Screen):
 			self.close(closeBouquetSelection) # close bouquet selection
 
 	def removeCurrentService(self):
-		if self.csel.servicelist.getCurrent() and self.csel.servicelist.getCurrent().valid():
+		if self.csel.servicelist.getCurrent() and self.csel.servicelist.getCurrent().valid() and not self.csel.movemode:
 			self.session.openWithCallback(self.removeCurrentServiceCallback, MessageBox, _("Are you sure to remove this entry?"))
 		else:
 			return 0
@@ -377,7 +377,7 @@ class ChannelContextMenu(Screen):
 			self.close()
 
 	def renameEntry(self):
-		if self.csel.servicelist.getCurrent() and self.csel.servicelist.getCurrent().valid():
+		if self.csel.servicelist.getCurrent() and self.csel.servicelist.getCurrent().valid() and not self.csel.movemode:
 			self.csel.renameEntry()
 			self.close()
 		else:
@@ -440,12 +440,14 @@ class ChannelContextMenu(Screen):
 
 	def findCurrentlyPlayed(self):
 		sel = self.csel.getCurrentSelection()
-		if sel and sel.valid():
+		if sel and sel.valid() and not self.csel.movemode:
 			currentPlayingService = self.session.nav.getCurrentlyPlayingServiceOrGroup()
 			self.csel.servicelist.setCurrent(currentPlayingService)
 			if self.csel.getCurrentSelection() != currentPlayingService:
 				self.csel.setCurrentSelection(sel)
-		self.close()
+			self.close()
+		else:
+			return 0
 
 class SelectionEventInfo:
 	def __init__(self):
@@ -1309,17 +1311,18 @@ class ChannelSelectionBase(Screen):
 					self.servicelist.moveToChar(charstr[0])
 
 	def numberZapActions(self, number):
-		if len(self.zapNumber)>4:
-			self.clearZapNumber()
-		self.zapNumber = self.zapNumber + str(number)
-		ref, bouquet = Screens.InfoBar.InfoBar.instance.searchNumber(int(self.zapNumber), bouquet=self.getRoot())
-		if ref:
-			if not ref.flags & eServiceReference.isMarker:
-				self.enterUserbouquet(bouquet)
-				self.servicelist.setCurrent(ref)
-			self.clearZapNumberTimer.start(1000, True)
-		else:
-			self.clearZapNumber()
+		if not self.movemode:
+			if len(self.zapNumber)>4:
+				self.clearZapNumber()
+			self.zapNumber = self.zapNumber + str(number)
+			ref, bouquet = Screens.InfoBar.InfoBar.instance.searchNumber(int(self.zapNumber), bouquet=self.getRoot())
+			if ref:
+				if not ref.flags & eServiceReference.isMarker:
+					self.enterUserbouquet(bouquet)
+					self.servicelist.setCurrent(ref)
+				self.clearZapNumberTimer.start(1000, True)
+			else:
+				self.clearZapNumber()
 
 	def clearZapNumber(self):
 		self.clearZapNumberTimer.stop()
@@ -1915,6 +1918,8 @@ class ChannelSelectionRadio(ChannelSelectionBase, ChannelSelectionEdit, ChannelS
 		self["RdsActions"].setEnabled(False)
 		infobar.rds_display.onRassInteractivePossibilityChanged.append(self.RassInteractivePossibilityChanged)
 		self.onClose.append(self.__onClose)
+		self.onExecBegin.append(self.__onExecBegin)
+		self.onExecEnd.append(self.__onExecEnd)
 
 	def __onClose(self):
 		lastservice = eServiceReference(config.tv.lastservice.value)
@@ -1932,6 +1937,12 @@ class ChannelSelectionRadio(ChannelSelectionBase, ChannelSelectionEdit, ChannelS
 	def RassInteractivePossibilityChanged(self, state):
 		self["RdsActions"].setEnabled(state)
 ########## RDS Radiotext / Rass Support END
+
+	def __onExecBegin(self):
+		self.info.show()
+
+	def __onExecEnd(self):
+		self.info.hide()
 
 	def cancel(self):
 		self.infobar.rds_display.onRassInteractivePossibilityChanged.remove(self.RassInteractivePossibilityChanged)
