@@ -15,7 +15,10 @@ class About(Screen):
 		Screen.__init__(self, session)
 		
 		hwname = ""
-		if about.getHardwareTypeString() == "INI-5000SV":
+		if about.getHardwareTypeString() == "INI-8000SV":
+		    hwname = "MB Premium Ultra HD"
+		    AboutText = _("Hardware: ") + hwname + "\n"
+		elif about.getHardwareTypeString() == "INI-5000SV":
 		    hwname = "MB Premium Twin HD"
 		    AboutText = _("Hardware: ") + hwname + "\n"
 		elif about.getHardwareTypeString() == "INI-1000SV":
