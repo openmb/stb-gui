@@ -996,6 +996,7 @@ class ChannelSelectionBase(Screen):
 				"gotAsciiCode": self.keyAsciiCode,
 				"keyLeft": self.keyLeft,
 				"keyRight": self.keyRight,
+				"keyRecord": self.keyRecord,
 				"1": self.keyNumberGlobal,
 				"2": self.keyNumberGlobal,
 				"3": self.keyNumberGlobal,
@@ -1336,6 +1337,11 @@ class ChannelSelectionBase(Screen):
 			self.changeBouquet(+1)
 		else:
 			self.servicelist.instance.moveSelection(self.servicelist.instance.pageDown)
+
+	def keyRecord(self):
+		ref = self.getCurrentSelection()
+		if ref and not(ref.flags & (eServiceReference.isMarker|eServiceReference.isDirectory)):
+			Screens.InfoBar.InfoBar.instance.instantRecord(serviceRef=ref)
 
 	def showFavourites(self):
 		if not self.pathChangeDisabled:
@@ -2111,6 +2117,9 @@ class SimpleChannelSelection(ChannelSelectionBase):
 
 	def saveRoot(self):
 		pass
+
+	def keyRecord(self):
+		return 0
 
 	def channelSelected(self): # just return selected service
 		ref = self.getCurrentSelection()
