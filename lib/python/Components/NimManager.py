@@ -370,16 +370,16 @@ class SecConfigure:
 					sec.setLNBLOFL(5150000)
 					sec.setLNBLOFH(5150000)
 					sec.setLNBThreshold(5150000)
-				elif currLnb.lof.getValue() == "user_defined":
-					sec.setLNBLOFL(currLnb.lofl.getValue() * 1000)
-					sec.setLNBLOFH(currLnb.lofh.getValue() * 1000)
-					sec.setLNBThreshold(currLnb.threshold.getValue() * 1000)
-				elif currLnb.lof.getValue() == "circle":
+				elif currLnb.lof.value == "user_defined":
+					sec.setLNBLOFL(currLnb.lofl.value * 1000)
+					sec.setLNBLOFH(currLnb.lofh.value * 1000)
+					sec.setLNBThreshold(currLnb.threshold.value * 1000)
+				elif currLnb.lof.value == "circular_lnb":
 					sec.setLNBLOFL(10750000)
 					sec.setLNBLOFH(10750000)
-					sec.setLNBThreshold(12700000)
-					sec.setToneMode(switchParam.OFF)
-#				if currLnb.output_12v.getValue() == "0V":
+					sec.setLNBThreshold(10750000)
+
+#				if currLnb.output_12v.value == "0V":
 #					pass # nyi in drivers
 #				elif currLnb.output_12v.getValue() == "12V":
 #					pass # nyi in drivers
@@ -1168,8 +1168,8 @@ def InitNimManager(nimmgr):
 		"universal_lnb": _("Universal LNB"),
 		"unicable": _("Unicable"),
 		"c_band": _("C-Band"),
-		"user_defined": _("User defined"),
-		"circle": _("Circular")}
+		"circular_lnb": _("Circular LNB"),
+		"user_defined": _("User defined")}
 
 	lnb_choices_default = "universal_lnb"
 
