@@ -1,4 +1,4 @@
-from Components.ActionMap import ActionMap
+from Components.ActionMap import ActionMap, HelpableActionMap
 from Components.Button import Button
 from Components.ChoiceList import ChoiceList, ChoiceEntryComponent
 from Components.SystemInfo import SystemInfo
@@ -9,6 +9,7 @@ from Screens.ChoiceBox import ChoiceBox
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Plugins.Plugin import PluginDescriptor
+from Tools.BoundFunction import boundFunction
 from ServiceReference import ServiceReference
 from enigma import eServiceReference
 
@@ -33,8 +34,8 @@ hotkeys = [(_("Red long"), "red_long", ""),
 	(_("Help"), "displayHelp", ""),
 	(_("Subtitle"), "subtitle", ""),
 	(_("Menu"), "mainMenu", ""),
-	(_("Info"), "info", "Infobar/openEventView"),
-	(_("Info Long"), "info_long", "Infobar/showEventInfoPlugins"),
+	(_("Info (EPG)"), "info", "Infobar/openEventView"),
+	(_("Info (EPG) long"), "info_long", "Infobar/showEventInfoPlugins"),
 	(_("List/Fav/PVR"), "list", ""),
 	(_("Back"), "back", ""),
 	(_("End"), "end", ""),
@@ -65,6 +66,7 @@ hotkeys = [(_("Red long"), "red_long", ""),
 	(_("Mark/Portal/Playlist"), "mark", ""),
 	(_("Sleep"), "sleep", ""),
 	(_("Context"), "contextmenu", ""),
+	(_("Recall"), "refresh", ""),
 	(_("Home"), "home", ""),
 	(_("Power"), "power", ""),
 	(_("Power long"), "power_long", "")]
@@ -105,14 +107,15 @@ def getHotkeyFunctions():
 	hotkeyFunctions.append((_("Zap up"), "Infobar/zapUp", "InfoBar"))
 	hotkeyFunctions.append((_("Switch channel up"), "Infobar/switchChannelUp", "InfoBar"))
 	hotkeyFunctions.append((_("Switch channel down"), "Infobar/switchChannelDown", "InfoBar"))
-	hotkeyFunctions.append((_("Open service list"), "Infobar/openServiceList", "InfoBar"))
+	hotkeyFunctions.append((_("Show service list"), "Infobar/openServiceList", "InfoBar"))
+	hotkeyFunctions.append((_("Show favourites list"), "Infobar/openFavouritesList", "InfoBar"))
 	hotkeyFunctions.append((_("History back"), "Infobar/historyBack", "InfoBar"))
 	hotkeyFunctions.append((_("History next"), "Infobar/historyNext", "InfoBar"))
 	hotkeyFunctions.append((_("Show eventinfo plugins"), "Infobar/showEventInfoPlugins", "EPG"))
-	hotkeyFunctions.append((_("Open event view"), "Infobar/openEventView", "EPG"))
-	hotkeyFunctions.append((_("Open single service EPG"), "Infobar/openSingleServiceEPG", "EPG"))
-	hotkeyFunctions.append((_("Open multi Service EPG"), "Infobar/openMultiServiceEPG", "EPG"))
-	hotkeyFunctions.append((_("Open Audioselection"), "Infobar/audioSelection", "InfoBar"))
+	hotkeyFunctions.append((_("Show event details"), "Infobar/openEventView", "EPG"))
+	hotkeyFunctions.append((_("Show single service EPG"), "Infobar/openSingleServiceEPG", "EPG"))
+	hotkeyFunctions.append((_("Show multi channel EPG"), "Infobar/openMultiServiceEPG", "EPG"))
+	hotkeyFunctions.append((_("Show Audioselection"), "Infobar/audioSelection", "InfoBar"))
 	hotkeyFunctions.append((_("Switch to radio mode"), "Infobar/showRadio", "InfoBar"))
 	hotkeyFunctions.append((_("Switch to TV mode"), "Infobar/showTv", "InfoBar"))
 	hotkeyFunctions.append((_("Show movies"), "Infobar/showMovies", "InfoBar"))
@@ -123,8 +126,10 @@ def getHotkeyFunctions():
 	hotkeyFunctions.append((_("Start timeshift"), "Infobar/startTimeshift", "InfoBar"))
 	hotkeyFunctions.append((_("Stop timeshift"), "Infobar/stopTimeshift", "InfoBar"))
 	hotkeyFunctions.append((_("Start teletext"), "Infobar/startTeletext", "InfoBar"))
-	hotkeyFunctions.append((_("Open subservice selection"), "Infobar/subserviceSelection", "InfoBar"))
-	hotkeyFunctions.append((_("Open subtitle selection"), "Infobar/subtitleSelection", "InfoBar"))
+	hotkeyFunctions.append((_("Show subservice selection"), "Infobar/subserviceSelection", "InfoBar"))
+	hotkeyFunctions.append((_("Show subtitle selection"), "Infobar/subtitleSelection", "InfoBar"))
+	hotkeyFunctions.append((_("Show InfoBar"), "Infobar/show", "InfoBar"))
+	hotkeyFunctions.append((_("Show second InfoBar"), "Infobar/showSecondInfoBar", "InfoBar"))
 	hotkeyFunctions.append((_("Show/hide infoBar"), "Infobar/toggleShow", "InfoBar"))
 	hotkeyFunctions.append((_("Letterbox zoom"), "Infobar/vmodeSelection", "InfoBar"))
 	if SystemInfo["PIPAvailable"]:
@@ -156,6 +161,7 @@ def getHotkeyFunctions():
 	hotkeyFunctions.append((_("Restart enigma"), "Module/Screens.Standby/TryQuitMainloop/3", "Power"))
 	hotkeyFunctions.append((_("Deep standby"), "Module/Screens.Standby/TryQuitMainloop/1", "Power"))
 	hotkeyFunctions.append((_("Usage Setup"), "Setup/usage", "Setup"))
+	hotkeyFunctions.append((_("User interface"), "Setup/userinterface", "Setup"))
 	hotkeyFunctions.append((_("Recording Setup"), "Setup/recording", "Setup"))
 	hotkeyFunctions.append((_("Harddisk Setup"), "Setup/harddisk", "Setup"))
 	hotkeyFunctions.append((_("Subtitles Settings"), "Setup/subtitlesetup", "Setup"))
@@ -383,34 +389,57 @@ class hotkeyActionMap(ActionMap):
 		else:
 			return ActionMap.action(self, contexts, action)
 
+class helpableHotkeyActionMap(HelpableActionMap):
+	def action(self, contexts, action):
+		if (action in tuple(x[1] for x in hotkeys) and self.actions.has_key(action)):
+			res = self.actions[action](action)
+			if res is not None:
+				return res
+			return 1
+		else:
+			return ActionMap.action(self, contexts, action)
+
 class InfoBarHotkey():
 	def __init__(self):
-		self["HotkeyButtonActions"] = hotkeyActionMap(["HotkeyActions"], dict((x[1], self.hotkeyGlobal) for x in hotkeys), -10)
+		self["HotkeyButtonActions"] = helpableHotkeyActionMap(self, "HotkeyActions",
+			dict((x[1],(self.hotkeyGlobal, boundFunction(self.getHelpText, x[1]))) for x in hotkeys), -10)
 		self.longkeyPressed = False
+
+	def getKeyFunctions(self, key):
+		selection = eval("config.misc.hotkey." + key + ".value.split(',')")
+		selected = []
+		for x in selection:
+			if x.startswith("Zap"):
+				selected.append(((_("Zap to") + " " + ServiceReference(eServiceReference(x.split("/", 1)[1]).toString()).getServiceName()), x))
+			else:
+				function = list(function for function in getHotkeyFunctions() if function[1] == x )
+				if function:
+					selected.append(function[0])
+		return selected
+
+	def getHelpText(self, key):
+		selected = self.getKeyFunctions(key)
+		if not selected:
+			return
+		if len(selected) == 1:
+			return selected[0][0]
+		else:
+			return _("Hotkey") + " " + tuple(x[0] for x in hotkeys if x[1] == key)[0]
 
 	def hotkeyGlobal(self, key):
 		if self.longkeyPressed:
 			self.longkeyPressed = False
 		else:
-			selection = eval("config.misc.hotkey." + key + ".value.split(',')")
-			if selection:
-				selected = []
-				for x in selection:
-					if x.startswith("Zap"):
-						selected.append(((_("Zap to") + " " + ServiceReference(eServiceReference(x.split("/", 1)[1]).toString()).getServiceName()), x))
-					else:
-						function = list(function for function in getHotkeyFunctions() if function[1] == x )
-						if function:
-							selected.append(function[0])
-				if not selected:
-					return 0
-				if len(selected) == 1:
-					if key.endswith("_long"):
-						self.longkeyPressed = True
-					return self.execHotkey(selected[0])
-				else:
-					key = tuple(x[0] for x in hotkeys if x[1] == key)[0]
-					self.session.openWithCallback(self.execHotkey, ChoiceBox, _("Hotkey") + " " + key, selected)
+			selected = self.getKeyFunctions(key)
+			if not selected:
+				return 0
+			elif len(selected) == 1:
+				if key.endswith("_long"):
+					self.longkeyPressed = True
+				return self.execHotkey(selected[0])
+			else:
+				key = tuple(x[0] for x in hotkeys if x[1] == key)[0]
+				self.session.openWithCallback(self.execHotkey, ChoiceBox, _("Hotkey") + " " + key, selected)
 
 	def execHotkey(self, selected):
 		if selected:

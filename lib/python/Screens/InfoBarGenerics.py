@@ -22,7 +22,7 @@ from Screens import ScreenSaver
 from Screens import Standby
 from Screens.ChoiceBox import ChoiceBox
 from Screens.Dish import Dish
-from Screens.EventView import EventViewEPGSelect, EventViewSimple, EventViewRecording
+from Screens.EventView import EventViewEPGSelect, EventViewSimple
 from Screens.InputBox import InputBox
 from Screens.MessageBox import MessageBox
 from Screens.MinuteInput import MinuteInput
@@ -332,9 +332,15 @@ class InfoBarShowHide(InfoBarScreenSaver):
 			self.show()
 			if self.secondInfoBarScreen:
 				self.secondInfoBarScreen.hide()
-		elif isStandardInfoBar(self) and config.usage.show_second_infobar.value == "EPG":
-			self.showDefaultEPG()
+		else:
+			self.showSecondInfoBar()
+
+	def showSecondInfoBar(self):
+		if isStandardInfoBar(self) and config.usage.show_second_infobar.value == "EPG":
+			if not(hasattr(self, "hotkeyGlobal") and self.hotkeyGlobal("info") != 0):
+				self.showDefaultEPG()
 		elif self.secondInfoBarScreen and config.usage.show_second_infobar.value and not self.secondInfoBarScreen.shown:
+			self.show()
 			self.secondInfoBarScreen.show()
 			self.startHideTimer()
 		else:
@@ -729,6 +735,10 @@ class InfoBarChannelSelection:
 			self.servicelist.moveDown()
 		self.servicelist.zap(enable_pipzap = True)
 
+	def openFavouritesList(self):
+		self.servicelist.showFavourites()
+		self.openServiceList()
+
 	def openServiceList(self):
 		self.session.execDialog(self.servicelist)
 
@@ -983,23 +993,20 @@ class InfoBarEPG:
 		self.serviceSel = None
 
 	def openSingleServiceEPG(self):
-		from Components.ServiceEventTracker import InfoBarCount
-		if InfoBarCount > 1:
-			self.openMultiServiceEPG(False)
-		else:
-			ref = self.session.nav.getCurrentlyPlayingServiceOrGroup()
-			if ref:
-				if self.servicelist.getMutableList() is not None: # bouquet in channellist
-					current_path = self.servicelist.getRoot()
-					services = self.getBouquetServices(current_path)
-					self.serviceSel = SimpleServicelist(services)
-					if self.serviceSel.selectService(ref):
-						self.epg_bouquet = current_path
-						self.session.openWithCallback(self.SingleServiceEPGClosed, EPGSelection, ref, self.zapToService, serviceChangeCB = self.changeServiceCB)
-					else:
-						self.session.openWithCallback(self.SingleServiceEPGClosed, EPGSelection, ref)
+		ref = self.servicelist.lastservice.value
+		ref = ref and eServiceReference(ref)
+		if ref:
+			if self.servicelist.getMutableList(): # bouquet in channellist
+				current_path = self.servicelist.getRoot()
+				services = self.getBouquetServices(current_path)
+				self.serviceSel = SimpleServicelist(services)
+				if self.serviceSel.selectService(ref):
+					self.epg_bouquet = current_path
+					self.session.openWithCallback(self.SingleServiceEPGClosed, EPGSelection, ref, self.zapToService, serviceChangeCB=self.changeServiceCB)
 				else:
-					self.session.open(EPGSelection, ref)
+					self.session.openWithCallback(self.SingleServiceEPGClosed, EPGSelection, ref)
+			else:
+				self.session.open(EPGSelection, ref)
 
 	def runPlugin(self, plugin):
 		plugin(session = self.session, servicelist = self.servicelist)
@@ -1060,7 +1067,7 @@ class InfoBarEPG:
 			if ptr:
 				epglist.append(ptr)
 			if epglist:
-				self.session.open(EventViewRecording, epglist[0], ServiceReference(ref), self.eventViewCallback, self.openMultiServiceEPG, self.openSimilarList)
+				self.session.open(EventViewEPGSelect, epglist[0], ServiceReference(ref), self.eventViewCallback, self.openSingleServiceEPG, self.openMultiServiceEPG, self.openSimilarList)
 		else:
 			ref = self.session.nav.getCurrentlyPlayingServiceOrGroup()
 			self.getNowNext()
