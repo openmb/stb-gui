@@ -585,6 +585,9 @@
 		<key id="KEY_RIGHT" mapto="rightUp" flags="b"/>
 		<key id="KEY_UP" mapto="upUp" flags="b"/>
 		<key id="KEY_DOWN" mapto="downUp" flags="b"/>
+
+		<key id="KEY_PREVIOUS" mapto="moveUp" flags="m"/>
+		<key id="KEY_NEXT" mapto="moveDown" flags="m"/>
 	</map>
 
 	<map context="AudioSelectionActions">
@@ -799,7 +802,8 @@
 		<key id="KEY_PLAYPAUSE" mapto="play" flags="m"/>
 	        <key id="KEY_LIST" mapto="playlist" flags="m"/>
 	        <key id="KEY_TIME" mapto="timeshift" flags="m"/>
-	        <key id="KEY_SEARCH" mapto="search" flags="m"/>
+	        <key id="KEY_SEARCH" mapto="search" flags="b"/>
+	        <key id="KEY_SEARCH" mapto="search_long" flags="l"/>
 	        <key id="KEY_RESTART" mapto="slow" flags="m"/>
 	        <key id="KEY_BOOKMARKS" mapto="mark" flags="m"/>
 		<key id="KEY_SLEEP" mapto="sleep" flags="m"/>
