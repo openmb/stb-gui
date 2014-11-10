@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 import os
 import time
@@ -60,15 +61,26 @@ def getCPUInfoString():
 	try:
 		cpu_count = 0
 		for line in open("/proc/cpuinfo").readlines():
-		        line = [x.strip() for x in line.strip().split(":")]
-		        if line[0] == "system type":
-		                processor = line[1].split()[0]
-		        if line[0] == "cpu MHz":
-		                cpu_speed = "%1.0f" % float(line[1])
-		                cpu_count += 1
+			line = [x.strip() for x in line.strip().split(":")]
+			if line[0] == "system type":
+				processor = line[1].split()[0]
+			if line[0] == "cpu MHz":
+				cpu_speed = "%1.0f" % float(line[1])
+				cpu_count += 1
+		if os.path.isfile('/proc/stb/fp/temp_sensor_avs'):
+			temperature = open("/proc/stb/fp/temp_sensor_avs").readline().replace('\n','')
+			return "%s %s MHz (%s) %s°C" % (processor, cpu_speed, ngettext("%d core", "%d cores", cpu_count) % cpu_count, temperature)
 		return "%s %s MHz (%s)" % (processor, cpu_speed, ngettext("%d core", "%d cores", cpu_count) % cpu_count)
 	except:
 		return _("undefined")
+
+def getDriverInstalledDate():
+	try:
+		driver = os.popen("opkg list-installed | grep dvb-modules").read().strip()
+		driver = driver.split("-")[-2:-1][0][-8:]
+		return driver[:4] + "-" + driver[4:6] + "-" + driver[6:]
+	except:
+		return _("unknown")
 
 # For modules that do "from About import about"
 about = sys.modules[__name__]
