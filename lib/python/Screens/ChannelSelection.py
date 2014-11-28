@@ -37,6 +37,8 @@ from ServiceReference import ServiceReference
 from Tools.BoundFunction import boundFunction
 from Tools import Notifications
 from Tools.Alternatives import CompareWithAlternatives
+from Plugins.Plugin import PluginDescriptor
+from Components.PluginComponent import plugins
 from os import remove
 profile("ChannelSelection.py after imports")
 
@@ -141,6 +143,8 @@ class ChannelContextMenu(Screen):
 			if not inBouquetRootList:
 				isPlayable = not (current_sel_flags & (eServiceReference.isMarker|eServiceReference.isDirectory))
 				if isPlayable:
+					for p in plugins.getPlugins(PluginDescriptor.WHERE_CHANNEL_CONTEXT_MENU):
+						append_when_current_valid(current, menu, (p.name, boundFunction(self.runPlugin, p)), key="bullet")
 					if config.servicelist.startupservice.value == self.csel.getCurrentSelection().toString():
 						append_when_current_valid(current, menu, (_("stop using as startup service"), self.unsetStartupService), level=0)
 					else:
@@ -213,10 +217,11 @@ class ChannelContextMenu(Screen):
 				if not csel.entry_marked and not inBouquetRootList and current_root and not (current_root.flags & eServiceReference.isGroup):
 					if current.type != -1:
 						menu.append(ChoiceEntryComponent(text=(_("add marker"), self.showMarkerInputBox)))
-					if haveBouquets:
-						append_when_current_valid(current, menu, (_("enable bouquet edit"), self.bouquetMarkStart), level=0)
-					else:
-						append_when_current_valid(current, menu, (_("enable favourite edit"), self.bouquetMarkStart), level=0)
+					if not csel.movemode:
+						if haveBouquets:
+							append_when_current_valid(current, menu, (_("enable bouquet edit"), self.bouquetMarkStart), level=0)
+						else:
+							append_when_current_valid(current, menu, (_("enable favourite edit"), self.bouquetMarkStart), level=0)
 					if current_sel_flags & eServiceReference.isGroup:
 						append_when_current_valid(current, menu, (_("edit alternatives"), self.editAlternativeServices), level=2)
 						append_when_current_valid(current, menu, (_("show alternatives"), self.showAlternativeServices), level=2)
@@ -474,6 +479,10 @@ class ChannelContextMenu(Screen):
 			self.close()
 		else:
 			return 0
+
+	def runPlugin(self, plugin):
+		plugin(session=self.session, service=self.csel.getCurrentSelection())
+		self.close()
 
 class SelectionEventInfo:
 	def __init__(self):
@@ -938,6 +947,8 @@ class ChannelSelectionEdit:
 			self.setTitle(self.saved_title)
 			self.saved_title = None
 			self.servicelist.resetRoot()
+			self.servicelist.l.setHideNumberMarker(config.usage.hide_number_markers.value)
+			self.servicelist.setCurrent(self.servicelist.getCurrent())
 		else:
 			self.mutableList = self.getMutableList()
 			self.movemode = True
@@ -945,6 +956,8 @@ class ChannelSelectionEdit:
 			self.saved_title = self.getTitle()
 			pos = self.saved_title.find(')')
 			self.setTitle(self.saved_title[:pos+1] + ' ' + _("[move mode]") + self.saved_title[pos+1:]);
+			self.servicelist.l.setHideNumberMarker(False)
+			self.servicelist.setCurrent(self.servicelist.getCurrent())
 		self["Service"].editmode = True
 
 	def handleEditCancel(self):
