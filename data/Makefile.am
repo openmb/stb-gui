@@ -6,7 +6,7 @@ dist_pkgdata_DATA = \
 	menu.xml \
 	prev.png \
 	radio.mvi \
-	box.mvi black.mvi \
+	splashbox.bin box.mvi black.mvi \
 	rcpositions.xml \
 	setup.xml \
 	skin_default.xml \
