@@ -201,7 +201,7 @@ int main(int argc, char **argv)
 	
 	FILE *infile;
 	char line[100];
-	char cmd[10]= "reboot";
+	char command[64];
 
 	if((infile = fopen("/proc/stb/info/boxtype", "r")) != NULL)
 	{
@@ -222,6 +222,9 @@ int main(int argc, char **argv)
 		else
 		{
 			eDebug("Wrong HW, this image can be only run on Miraclbox Premium Series");
+			sprintf(command, "showiframe /usr/share/enigma2/box.mvi > /dev/null");
+			system(cmd);
+			sprintf(command, "sleep 10;reboot -f");
 			system(cmd);
 		}
 		fclose(infile);
