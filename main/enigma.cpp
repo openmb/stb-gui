@@ -223,9 +223,9 @@ int main(int argc, char **argv)
 		{
 			eDebug("Wrong HW, this image can be only run on Miraclbox Premium Series");
 			sprintf(command, "showiframe /usr/share/enigma2/box.mvi > /dev/null");
-			system(cmd);
-			sprintf(command, "sleep 10;reboot -f");
-			system(cmd);
+			system(command);
+			sprintf(command, "sleep 5;reboot -f");
+			system(command);
 		}
 		fclose(infile);
 	}
