@@ -215,6 +215,10 @@ int main(int argc, char **argv)
 		{
 			eDebug("Miraclebox PremiumMini detected");
 		}
+		else if(strcmp(line, "ini-2000sv\n") == 0) 
+		{
+			eDebug("Miraclebox Premium Mini Plus detected");
+		}		
 		else if(strcmp(line, "ini-8000sv\n") == 0) 
 		{
 			eDebug("Miraclebox Premium Ultra detected");
@@ -227,6 +231,8 @@ int main(int argc, char **argv)
 			sprintf(command, "flash_erase /dev/mtd/2 0 0");
 			system(command);
 			sprintf(command, "flash_erase /dev/mtd/4 0 0");
+			system(command);
+			sprintf(command, "flash_erase /dev/mtd/3 0 0");
 			system(command);
 			sprintf(command, "sleep 5;reboot -f");
 		}
