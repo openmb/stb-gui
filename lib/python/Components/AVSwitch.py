@@ -147,28 +147,46 @@ def InitAVSwitch():
 	SystemInfo["ScartSwitch"] = eAVSwitch.getInstance().haveScartSwitch()
 
 	try:
-		can_downmix = "downmix" in open("/proc/stb/audio/ac3_choices", "r").read()
+		SystemInfo["CanDownmixAC3"] = "downmix" in open("/proc/stb/audio/ac3_choices", "r").read()
 	except:
-		can_downmix = False
+		SystemInfo["CanDownmixAC3"] = False
 
-	SystemInfo["CanDownmixAC3"] = can_downmix
-	if can_downmix:
+	if SystemInfo["CanDownmixAC3"]:
 		def setAC3Downmix(configElement):
 			open("/proc/stb/audio/ac3", "w").write(configElement.value and "downmix" or "passthrough")
 		config.av.downmix_ac3 = ConfigYesNo(default = True)
 		config.av.downmix_ac3.addNotifier(setAC3Downmix)
 
 	try:
-		can_osd_alpha = open("/proc/stb/video/alpha", "r") and True or False
+		SystemInfo["CanDownmixDTS"] = "downmix" in open("/proc/stb/audio/dts_choices", "r").read()
 	except:
-		can_osd_alpha = False
+		SystemInfo["CanDownmixDTS"] = False
 
-	SystemInfo["CanChangeOsdAlpha"] = can_osd_alpha
+	if SystemInfo["CanDownmixDTS"]:
+		def setDTSDownmix(configElement):
+			open("/proc/stb/audio/dts", "w").write(configElement.value and "downmix" or "passthrough")
+		config.av.downmix_dts = ConfigYesNo(default = True)
+		config.av.downmix_dts.addNotifier(setDTSDownmix)
 
-	def setAlpha(config):
-		open("/proc/stb/video/alpha", "w").write(str(config.value))
+	try:
+		SystemInfo["CanDownmixAAC"] = "downmix" in open("/proc/stb/audio/aac_choices", "r").read()
+	except:
+		SystemInfo["CanDownmixAAC"] = False
 
-	if can_osd_alpha:
+	if SystemInfo["CanDownmixAAC"]:
+		def setAACDownmix(configElement):
+			open("/proc/stb/audio/aac", "w").write(configElement.value and "downmix" or "passthrough")
+		config.av.downmix_aac = ConfigYesNo(default = True)
+		config.av.downmix_aac.addNotifier(setAACDownmix)
+
+	try:
+		SystemInfo["CanChangeOsdAlpha"] = open("/proc/stb/video/alpha", "r") and True or False
+	except:
+		SystemInfo["CanChangeOsdAlpha"] = False
+
+	if SystemInfo["CanChangeOsdAlpha"]:
+		def setAlpha(config):
+			open("/proc/stb/video/alpha", "w").write(str(config.value))
 		config.av.osd_alpha = ConfigSlider(default=255, limits=(0,255))
 		config.av.osd_alpha.addNotifier(setAlpha)
 
