@@ -40,7 +40,7 @@ MAX_TIMELINES = 6
 config.misc.graph_mepg = ConfigSubsection()
 config.misc.graph_mepg.prev_time = ConfigClock(default = time())
 config.misc.graph_mepg.prev_time_period = ConfigInteger(default = 120, limits = (60, 300))
-config.misc.graph_mepg.ev_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -8, max = 8, wraparound = True)
+config.misc.graph_mepg.ev_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -12, max = 12, wraparound = True)
 config.misc.graph_mepg.items_per_page = ConfigSelectionNumber(min = 3, max = 40, stepwidth = 1, default = 6, wraparound = True)
 config.misc.graph_mepg.items_per_page_listscreen = ConfigSelectionNumber(min = 3, max = 60, stepwidth = 1, default = 12, wraparound = True)
 config.misc.graph_mepg.default_mode = ConfigYesNo(default = False)
@@ -201,9 +201,12 @@ class EPGList(HTMLComponent, GUIComponent):
 			self.eventBorderWidth = int(value)
 		def EventNamePadding(value):
 			self.eventNamePadding = int(value)
-		for (attrib, value) in [x for x in self.skinAttributes if x[0] in dir() and callable(locals().get(x[0]))]:
-			locals().get(attrib)(value)
-			self.skinAttributes.remove((attrib, value))
+		for (attrib, value) in list(self.skinAttributes):
+			try:
+				locals().get(attrib)(value)
+				self.skinAttributes.remove((attrib, value))
+			except:
+				pass
 		self.l.setFont(0, self.serviceFont)
 		self.setEventFontsize()
 		rc = GUIComponent.applySkin(self, desktop, screen)
@@ -684,9 +687,12 @@ class TimelineText(HTMLComponent, GUIComponent):
 			self.backColor = parseColor(value).argb()
 		def font(value):
 			self.font = parseFont(value,  ((1, 1), (1, 1)) )
-		for (attrib, value) in [x for x in self.skinAttributes if x[0] in dir() and callable(locals().get(x[0]))]:
-			locals().get(attrib)(value)
-			self.skinAttributes.remove((attrib, value))
+		for (attrib, value) in list(self.skinAttributes):
+			try:
+				locals().get(attrib)(value)
+				self.skinAttributes.remove((attrib, value))
+			except:
+				pass
 		self.l.setFont(0, self.font)
 		return GUIComponent.applySkin(self, desktop, screen)
 
