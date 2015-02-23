@@ -166,6 +166,7 @@ class ParentalControl:
 	def servicePinEntered(self, service, result):
 		if result is not None and result:
 			self.setSessionPinCached()
+			self.hideBlacklist(config.ParentalControl.hideBlacklist)
 			self.callback(ref = service)
 		else:
 			#This is the new function of caching cancelling of service pin
@@ -239,6 +240,8 @@ class ParentalControl:
 			self.hideBlacklist(config.ParentalControl.hideBlacklist)
 		else:
 			config.ParentalControl.hideBlacklist.addNotifier(self.hideBlacklist)
+			config.ParentalControl.servicepinactive.addNotifier(self.hideBlacklist, initial_call=False)
+			config.ParentalControl.storeservicepin.addNotifier(self.hideBlacklist, initial_call=False)
 		self.filesOpened = True
 
 	def __getattr__(self, name):
@@ -252,7 +255,7 @@ class ParentalControl:
 
 	def hideBlacklist(self, configEntry):
 		if self.blacklist:
-			if configEntry.value and not self.sessionPinCached:
+			if config.ParentalControl.servicepinactive.value and config.ParentalControl.storeservicepin.value != "never" and config.ParentalControl.hideBlacklist.value and not self.sessionPinCached:
 				for ref in self.blacklist:
 					if TYPE_BOUQUET not in ref:
 						eDVBDB.getInstance().addFlag(eServiceReference(ref), 2)
