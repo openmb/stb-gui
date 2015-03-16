@@ -143,14 +143,12 @@ class PliExtraInfo(Poll, Converter, object):
 		return "%d-%d:%05d:%04d:%04d:%04d" % (onid, tsid, sidpid, vpid, apid, pcrpid)
 
 	def createTransponderInfo(self, fedata, feraw):
-		if not feraw or not fedata:
-			return ""
 		if "DVB-T" in feraw.get("tuner_type"):
-			tmp = addspace(self.createChannelNumber(fedata, feraw)) + self.createFrequency(feraw) + "/" + self.createPolarization(fedata)
+			tmp = addspace(self.createChannelNumber(fedata, feraw)) + addspace(self.createFrequency(feraw)) + addspace(self.createPolarization(fedata))
 		else:
 			tmp = addspace(self.createFrequency(feraw)) + addspace(self.createPolarization(fedata))
 		return addspace(self.createTunerSystem(fedata)) + tmp + addspace(self.createSymbolRate(fedata, feraw)) + addspace(self.createFEC(fedata, feraw)) \
-			+ addspace(self.createModulation(fedata)) + self.createOrbPos(feraw)
+			+ addspace(self.createModulation(fedata)) + addspace(self.createOrbPos(feraw))
 
 	def createFrequency(self, feraw):
 		frequency = feraw.get("frequency")
@@ -179,10 +177,7 @@ class PliExtraInfo(Poll, Converter, object):
 		return ""
 
 	def createPolarization(self, fedata):
-		polarization = fedata.get("polarization_abbreviation")
-		if polarization:
-			return polarization
-		return ""
+		return fedata.get("polarization_abbreviation") or ""
 
 	def createFEC(self, fedata, feraw):
 		if "DVB-T" in feraw.get("tuner_type"):
@@ -208,16 +203,10 @@ class PliExtraInfo(Poll, Converter, object):
 		return ""
 
 	def createTunerType(self, feraw):
-		tunertype = feraw.get("tuner_type")
-		if tunertype:
-			return tunertype
-		return ""
+		return feraw.get("tuner_type") or ""
 
 	def createTunerSystem(self, fedata):
-		tunersystem = fedata.get("system")
-		if tunersystem:
-			return tunersystem
-		return ""
+		return fedata.get("system") or ""
 
 	def createOrbPos(self, feraw):
 		orbpos = feraw.get("orbital_position")
@@ -238,7 +227,6 @@ class PliExtraInfo(Poll, Converter, object):
 
 	@cached
 	def getText(self):
-
 		service = self.source.service
 		if service is None:
 			return ""
@@ -276,22 +264,24 @@ class PliExtraInfo(Poll, Converter, object):
 					self.fedata = ConvertToHumanReadable(self.feraw)
 
 		feraw = self.feraw
-		fedata = self.fedata
-
+		if not feraw:
+			feraw = info.getInfoObject(iServiceInformation.sTransponderData)
+			if not feraw:
+				return ""
+			fedata = ConvertToHumanReadable(feraw)
+		else:
+			fedata = self.fedata
 
 		if self.type == "All":
 			self.getCryptoInfo(info)
 			if config.usage.show_cryptoinfo.value:
-				return addspace(self.createProviderName(info)) + self.createTransponderInfo(fedata,feraw) + "\n" \
+				return addspace(self.createProviderName(info)) + self.createTransponderInfo(fedata, feraw) + "\n" \
 				+ addspace(self.createCryptoBar(info)) + addspace(self.createCryptoSpecial(info)) + "\n" \
 				+ addspace(self.createPIDInfo(info)) + addspace(self.createVideoCodec(info)) + self.createResolution(info)
 			else:
-				return addspace(self.createProviderName(info)) + self.createTransponderInfo(fedata,feraw) + "\n" \
+				return addspace(self.createProviderName(info)) + self.createTransponderInfo(fedata, feraw) + "\n" \
 				+ addspace(self.createCryptoBar(info)) + self.current_source + "\n" \
 				+ addspace(self.createCryptoSpecial(info)) + addspace(self.createVideoCodec(info)) + self.createResolution(info)
-
-		if not feraw or not fedata:
-			return ""
 
 		if self.type == "ServiceInfo":
 			return addspace(self.createProviderName(info)) + addspace(self.createTunerSystem(fedata)) + addspace(self.createFrequency(feraw)) + addspace(self.createPolarization(fedata)) \
@@ -299,7 +289,7 @@ class PliExtraInfo(Poll, Converter, object):
 			+ addspace(self.createVideoCodec(info)) + self.createResolution(info)
 
 		if self.type == "TransponderInfo":
-			return self.createTransponderInfo(fedata,feraw)
+			return self.createTransponderInfo(fedata, feraw)
 
 		if self.type == "TransponderFrequency":
 			return self.createFrequency(feraw)
