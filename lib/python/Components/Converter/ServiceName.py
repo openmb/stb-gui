@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Components.Converter.Converter import Converter
 from enigma import iServiceInformation, iPlayableService, iPlayableServicePtr
+from ServiceReference import resolveAlternate
 from Components.Element import cached
 
 class ServiceName(Converter, object):
@@ -11,10 +12,6 @@ class ServiceName(Converter, object):
 
 	def __init__(self, type):
 		Converter.__init__(self, type)
-
-		self.mode = ""
-		if ';' in type:
-			type, self.mode = type.split(';')
 
 		if type == "Provider":
 			self.type = self.PROVIDER
