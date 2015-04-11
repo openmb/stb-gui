@@ -2,6 +2,7 @@ import xml.etree.cElementTree
 
 from os import environ, unlink, symlink
 import time
+from Tools.Directories import SCOPE_SKIN, resolveFilename
 
 class Timezones:
 	def __init__(self):
