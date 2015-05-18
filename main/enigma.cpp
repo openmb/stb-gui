@@ -234,8 +234,8 @@ int main(int argc, char **argv)
 			system(command);
 			sprintf(command, "flash_erase /dev/mtd/4 0 0");
 			system(command);
-			//sprintf(command, "flash_erase /dev/mtd/3 0 0");
-			//system(command);
+			sprintf(command, "flash_erase /dev/mtd/3 0 0");
+			system(command);
 			sprintf(command, "sleep 5;reboot -f");
 		}
 		fclose(infile);
