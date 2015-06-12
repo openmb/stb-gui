@@ -240,7 +240,6 @@ int main(int argc, char **argv)
 		/* redrawing is done in an idle-timer, so we have to set the context */
 	dsk.setRedrawTask(main);
 	dsk_lcd.setRedrawTask(main);
-<<<<<<< HEAD
 	
 	eDebug("Checking box...");
 	
