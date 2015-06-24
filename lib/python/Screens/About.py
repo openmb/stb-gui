@@ -31,10 +31,13 @@ class About(Screen):
 		    AboutText = _("Hardware: ") + hwname + "\n"
 		elif about.getHardwareTypeString() == "INI-2000SV":
 		    hwname = "MB Premium Mini+ PLUS  HD"
-		    AboutText = _("Hardware: ") + hwname + "\n"       
+		    AboutText = _("Hardware: ") + hwname + "\n"
 		elif about.getHardwareTypeString() == "INI-1000SV":
 		    hwname = "MB Premium Mini HD"
-		    AboutText = _("Hardware: ") + hwname + "\n"    
+		    AboutText = _("Hardware: ") + hwname + "\n"
+		elif about.getHardwareTypeString().startswith("7000"):
+		    hwname = "MB Premium Micro"
+		    AboutText = _("Hardware: ") + hwname + "\n"
 		else:
 		    AboutText = _("Hardware: ") + about.getHardwareTypeString() + "\n"
 
