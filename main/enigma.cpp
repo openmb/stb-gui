@@ -271,6 +271,10 @@ int main(int argc, char **argv)
 		{
 			eDebug("Miraclebox Premium Micro detected");
 		}
+		else if(strcmp(line, "g300\n") == 0) 
+		{
+			eDebug("Miraclebox Premium XXXXX detected");
+		}
 		else
 		{
 			eDebug("Wrong HW, this image can be only run on Miraclbox Premium Series");
