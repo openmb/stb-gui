@@ -27,55 +27,6 @@ static std::string getSize(const char* file)
 	return tmp;
 }
 
-static unsigned char *simple_resize_24(unsigned char *orgin, int ox, int oy, int dx, int dy)
-{
-	unsigned char *cr = new unsigned char[dx * dy * 3];
-	if (cr == NULL)
-	{
-		eDebug("[ePicLoad] resize24 Error malloc");
-		return orgin;
-	}
-	const int stride = 3 * dx;
-	#pragma omp parallel for
-	for (int j = 0; j < dy; ++j)
-	{
-		unsigned char* k = cr + (j * stride);
-		const unsigned char* p = orgin + (j * oy / dy * ox) * 3;
-		for (int i = 0; i < dx; i++)
-		{
-			const unsigned char* ip = p + (i * ox / dx) * 3;
-			*k++ = ip[0];
-			*k++ = ip[1];
-			*k++ = ip[2];
-		}
-	}
-	delete [] orgin;
-	return cr;
-}
-
-static unsigned char *simple_resize_8(unsigned char *orgin, int ox, int oy, int dx, int dy)
-{
-	unsigned char* cr = new unsigned char[dx * dy];
-	if (cr == NULL)
-	{
-		eDebug("[ePicLoad] resize8 Error malloc");
-		return(orgin);
-	}
-	const int stride = dx;
-	#pragma omp parallel for
-	for (int j = 0; j < dy; ++j)
-	{
-		unsigned char* k = cr + (j * stride);
-		const unsigned char* p = orgin + (j * oy / dy * ox);
-		for (int i = 0; i < dx; i++)
-		{
-			*k++ = p[i * ox / dx];
-		}
-	}
-	delete [] orgin;
-	return cr;
-}
-
 static unsigned char *color_resize(unsigned char * orgin, int ox, int oy, int dx, int dy)
 {
 	unsigned char* cr = new unsigned char[dx * dy * 3];
@@ -345,15 +296,13 @@ static void png_load(Cfilepara* filepara, int background, bool forceRGB = false)
 	}
 	else
 	{
-		if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-			png_set_expand(png_ptr);
 		if (bit_depth == 16)
 			png_set_strip_16(png_ptr);
 		if (color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
 			png_set_gray_to_rgb(png_ptr);
-		if (color_type == PNG_COLOR_TYPE_PALETTE)
+		if (color_type & PNG_COLOR_MASK_PALETTE)
 			png_set_palette_to_rgb(png_ptr);
-		if ((color_type == PNG_COLOR_TYPE_RGB_ALPHA) || (color_type == PNG_COLOR_TYPE_GRAY_ALPHA))
+		if (color_type & PNG_COLOR_MASK_ALPHA || png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
 		{
 			png_set_strip_alpha(png_ptr);
 			png_color_16 bg;
@@ -364,7 +313,6 @@ static void png_load(Cfilepara* filepara, int background, bool forceRGB = false)
 			bg.index = 0;
 			png_set_background(png_ptr, &bg, PNG_BACKGROUND_GAMMA_SCREEN, 0, 1.0);
 		}
-		int number_passes = png_set_interlace_handling(png_ptr);
 		png_read_update_info(png_ptr, info_ptr);
 
 		if (width * 3 != png_get_rowbytes(png_ptr, info_ptr))
@@ -379,6 +327,7 @@ static void png_load(Cfilepara* filepara, int background, bool forceRGB = false)
 		filepara->oy = height;
 		filepara->pic_buffer = pic_buffer;
 
+		int number_passes = png_set_interlace_handling(png_ptr);
 		for(int pass = 0; pass < number_passes; pass++)
 		{
 			fbptr = (png_byte *)pic_buffer;
@@ -711,35 +660,27 @@ void ePicLoad::decodeThumb()
 	std::string cachefile = "";
 	std::string cachedir = "/.Thumbnails";
 
-	if(m_filepara->id == F_JPEG)
+	getExif(m_filepara->file, 1);
+	if (m_exif && m_exif->m_exifinfo->IsExif)
 	{
-		Cexif *exif = new Cexif;
-		if(exif->DecodeExif(m_filepara->file, 1))
+		if (m_exif->m_exifinfo->Thumnailstate == 2)
 		{
-			if(exif->m_exifinfo->IsExif)
-			{
-				if(exif->m_exifinfo->Thumnailstate == 2)
-				{
-					free(m_filepara->file);
-					m_filepara->file = strdup(THUMBNAILTMPFILE);
-					exif_thumbnail = true;
-					eDebug("[ePicLoad] Exif Thumbnail found");
-				}
-				m_filepara->addExifInfo(exif->m_exifinfo->CameraMake);
-				m_filepara->addExifInfo(exif->m_exifinfo->CameraModel);
-				m_filepara->addExifInfo(exif->m_exifinfo->DateTime);
-				char buf[20];
-				snprintf(buf, 20, "%d x %d", exif->m_exifinfo->Width, exif->m_exifinfo->Height);
-				m_filepara->addExifInfo(buf);
-			}
-			exif->ClearExif();
+			free(m_filepara->file);
+			m_filepara->file = strdup(THUMBNAILTMPFILE);
+			exif_thumbnail = true;
+			eDebug("[ePicLoad] Exif Thumbnail found");
 		}
-		delete exif;
+		m_filepara->addExifInfo(m_exif->m_exifinfo->CameraMake);
+		m_filepara->addExifInfo(m_exif->m_exifinfo->CameraModel);
+		m_filepara->addExifInfo(m_exif->m_exifinfo->DateTime);
+		char buf[20];
+		snprintf(buf, 20, "%d x %d", m_exif->m_exifinfo->Width, m_exif->m_exifinfo->Height);
+		m_filepara->addExifInfo(buf);
 	}
 
-	if((! exif_thumbnail) && m_conf.usecache)
+	if (!exif_thumbnail && m_conf.usecache)
 	{
-		if(FILE *f = fopen(m_filepara->file, "rb"))
+		if (FILE *f = fopen(m_filepara->file, "rb"))
 		{
 			int c;
 			int count = 1024*100; // get checksum data out of max 100kB
@@ -747,11 +688,8 @@ void ePicLoad::decodeThumb()
 			char crcstr[9];
 			*crcstr = 0;
 
-			while ((c = getc(f)) != EOF)
-			{
+			while (count-- > 0 && (c = getc(f)) != EOF)
 				crc32 = crc32_table[((crc32) ^ (c)) & 0xFF] ^ ((crc32) >> 8);
-				if (--count < 0) break;
-			}
 
 			fclose(f);
 			crc32 = ~crc32;
@@ -763,7 +701,7 @@ void ePicLoad::decodeThumb()
 				cachedir = cachedir.substr(0, pos) + "/.Thumbnails";
 
 			cachefile = cachedir + std::string("/pc_") + crcstr;
-			if(!access(cachefile.c_str(), R_OK))
+			if (!access(cachefile.c_str(), R_OK))
 			{
 				cachefile_found = true;
 				free(m_filepara->file);
@@ -774,7 +712,7 @@ void ePicLoad::decodeThumb()
 		}
 	}
 
-	switch(m_filepara->id)
+	switch (m_filepara->id)
 	{
 		case F_PNG:	png_load(m_filepara, m_conf.background, true);
 				break;
@@ -786,18 +724,18 @@ void ePicLoad::decodeThumb()
 				break;
 	}
 
-	if(exif_thumbnail)
+	if (exif_thumbnail)
 		::unlink(THUMBNAILTMPFILE);
 
-	if(m_filepara->pic_buffer != NULL)
+	if (m_filepara->pic_buffer != NULL)
 	{
-		//save cachefile
-		if(m_conf.usecache && (!exif_thumbnail) && (!cachefile_found))
+		// Save cachefile
+		if (m_conf.usecache && !exif_thumbnail && !cachefile_found)
 		{
-			if(access(cachedir.c_str(), R_OK))
+			if (access(cachedir.c_str(), R_OK))
 				::mkdir(cachedir.c_str(), 0755);
 
-			//resize for Thumbnail
+			// Resize for Thumbnail
 			int imx, imy;
 			if (m_filepara->ox <= m_filepara->oy)
 			{
@@ -810,50 +748,14 @@ void ePicLoad::decodeThumb()
 				imy = (int)( (m_conf.thumbnailsize * ((double)m_filepara->oy)) / ((double)m_filepara->ox) );
 			}
 
-			if (m_filepara->bits == 8)
-				m_filepara->pic_buffer = simple_resize_8(m_filepara->pic_buffer, m_filepara->ox, m_filepara->oy, imx, imy);
-			else
-				m_filepara->pic_buffer = color_resize(m_filepara->pic_buffer, m_filepara->ox, m_filepara->oy, imx, imy);
+			m_filepara->pic_buffer = color_resize(m_filepara->pic_buffer, m_filepara->ox, m_filepara->oy, imx, imy);
 			m_filepara->ox = imx;
 			m_filepara->oy = imy;
 
-			if(jpeg_save(cachefile.c_str(), m_filepara->ox, m_filepara->oy, m_filepara->pic_buffer))
+			if (jpeg_save(cachefile.c_str(), m_filepara->ox, m_filepara->oy, m_filepara->pic_buffer))
 				eDebug("[ePicLoad] error saving cachefile");
 		}
-
-		resizePic();
 	}
-}
-
-void ePicLoad::resizePic()
-{
-	int imx, imy;
-
-	if (m_conf.aspect_ratio == 0)  // do not keep aspect ratio but just fill the destination area
-	{
-		imx = m_filepara->max_x;
-		imy = m_filepara->max_y;
-	}
-	else if ((m_conf.aspect_ratio * m_filepara->oy * m_filepara->max_x / m_filepara->ox) <= m_filepara->max_y)
-	{
-		imx = m_filepara->max_x;
-		imy = (int)(m_conf.aspect_ratio * m_filepara->oy * m_filepara->max_x / m_filepara->ox);
-	}
-	else
-	{
-		imx = (int)((1.0/m_conf.aspect_ratio) * m_filepara->ox * m_filepara->max_y / m_filepara->oy);
-		imy = m_filepara->max_y;
-	}
-
-	if (m_filepara->bits == 8)
-		m_filepara->pic_buffer = simple_resize_8(m_filepara->pic_buffer, m_filepara->ox, m_filepara->oy, imx, imy);
-	else if (m_conf.resizetype)
-		m_filepara->pic_buffer = color_resize(m_filepara->pic_buffer, m_filepara->ox, m_filepara->oy, imx, imy);
-	else
-		m_filepara->pic_buffer = simple_resize_24(m_filepara->pic_buffer, m_filepara->ox, m_filepara->oy, imx, imy);
-
-	m_filepara->ox = imx;
-	m_filepara->oy = imy;
 }
 
 void ePicLoad::gotMessage(const Message &msg)
@@ -1022,11 +924,11 @@ PyObject *ePicLoad::getInfo(const char *filename)
 	return list ? (PyObject*)list : (PyObject*)PyList_New(0);
 }
 
-bool ePicLoad::getExif(const char *filename)
+bool ePicLoad::getExif(const char *filename, int Thumb)
 {
 	if (!m_exif) {
 		m_exif = new Cexif;
-		return m_exif->DecodeExif(filename);
+		return m_exif->DecodeExif(filename, Thumb);
 	}
 	return true;
 }
@@ -1134,7 +1036,8 @@ int ePicLoad::getData(ePtr<gPixmap> &result)
 				int y;
 				#pragma omp parallel for
 				for (y = 1; y < yoff; ++y) // copy from first line
-					memcpy(tmp_buffer + y*surface->stride, tmp_buffer, m_filepara->max_x * surface->bypp);
+					memcpy(tmp_buffer + y*surface->stride, tmp_buffer,
+						m_filepara->max_x * surface->bypp);
 				#pragma omp parallel for
 				for (y = yoff + scry; y < m_filepara->max_y; ++y)
 					memcpy(tmp_buffer + y * surface->stride, tmp_buffer,
