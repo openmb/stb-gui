@@ -148,7 +148,7 @@ RESULT eDVBServiceRecord::prepare(const char *filename, time_t begTime, time_t e
 				meta.m_description = descr;
 			if (tags)
 				meta.m_tags = tags;
-			meta.m_scrambled = config_recording_never_decrypt ? true : m_record_ecm; /* assume we will record scrambled data, when ecm will be included in the recording */
+			meta.m_scrambled = !m_descramble;
 			ret = meta.updateMeta(filename) ? -255 : 0;
 			if (!ret)
 			{
@@ -313,6 +313,7 @@ int eDVBServiceRecord::doRecord()
 			eDebug("[eDVBServiceRecord] NO DEMUX available!");
 			m_error = errNoDemuxAvailable;
 			m_event((iRecordableService*)this, evRecordFailed);
+			::close(fd);
 			return errNoDemuxAvailable;
 		}
 		demux->createTSRecorder(m_record);
@@ -321,6 +322,7 @@ int eDVBServiceRecord::doRecord()
 			eDebug("[eDVBServiceRecord] no ts recorder available.");
 			m_error = errNoTsRecorderAvailable;
 			m_event((iRecordableService*)this, evRecordFailed);
+			::close(fd);
 			return errNoTsRecorderAvailable;
 		}
 		m_record->setTargetFD(fd);
