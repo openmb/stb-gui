@@ -21,6 +21,7 @@ import skin
 class About(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
+		self.setTitle(_("About"))
 		
 		hwname = ""
 		if about.getHardwareTypeString() == "INI-8000SV":
