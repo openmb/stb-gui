@@ -196,7 +196,7 @@ class InitInputDevices:
 		elif boxtype == 'mbmicro':
 			cmd = "config.inputDevices." + device + ".repeat = ConfigSlider(default=30, increment = 10, limits=(0, 500))"
 		elif boxtype == 'mbtwinplus':
-			cmd = "config.inputDevices." + device + ".repeat = ConfigSlider(default=150, increment = 10, limits=(0, 500))"
+			cmd = "config.inputDevices." + device + ".repeat = ConfigSlider(default=250, increment = 10, limits=(0, 500))"
 		else:
 			cmd = "config.inputDevices." + device + ".repeat = ConfigSlider(default=100, increment = 10, limits=(0, 500))"
 		exec cmd
@@ -207,7 +207,7 @@ class InitInputDevices:
 		elif boxtype == 'mbmicro':
 			cmd = "config.inputDevices." + device + ".delay = ConfigSlider(default=200, increment = 100, limits=(0, 5000))"
 		elif boxtype == 'mbtwinplus':
-			cmd = "config.inputDevices." + device + ".delay = ConfigSlider(default=400, increment = 100, limits=(0, 5000))"
+			cmd = "config.inputDevices." + device + ".delay = ConfigSlider(default=500, increment = 100, limits=(0, 5000))"
 		else:
 			cmd = "config.inputDevices." + device + ".delay = ConfigSlider(default=700, increment = 100, limits=(0, 5000))"
 		exec cmd
