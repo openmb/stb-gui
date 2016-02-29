@@ -1,7 +1,6 @@
 from boxbranding import getBoxType, getBrandOEM
 
 from config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigText, ConfigInteger
-from Tools.Directories import pathExists
 from SystemInfo import SystemInfo
 from fcntl import ioctl
 import os
@@ -228,13 +227,9 @@ config.plugins.remotecontroltype.rctype = ConfigInteger(default = 0)
 
 class RcTypeControl():
 	def __init__(self):
-		if pathExists('/proc/stb/ir/rc/type') and pathExists('/proc/stb/info/boxtype') and getBrandOEM() not in ('gigablue', 'odin', 'ini', 'entwopia', 'tripledot'):
+		if SystemInfo["RcTypeChangable"] and os.path.exists('/proc/stb/info/boxtype') and getBrandOEM() not in ('gigablue', 'odin', 'ini', 'entwopia', 'tripledot'):
 			self.isSupported = True
-
-			fd = open('/proc/stb/info/boxtype', 'r')
-			self.boxType = fd.read()
-			fd.close()
-
+			self.boxType = open('/proc/stb/info/boxtype', 'r').read().strip()
 			if config.plugins.remotecontroltype.rctype.value != 0:
 				self.writeRcType(config.plugins.remotecontroltype.rctype.value)
 		else:
@@ -247,8 +242,6 @@ class RcTypeControl():
 		return self.boxType
 
 	def writeRcType(self, rctype):
-		fd = open('/proc/stb/ir/rc/type', 'w')
-		fd.write('%d' % rctype)
-		fd.close()
+		open('/proc/stb/ir/rc/type', 'w').write(rctype and '%d' % rctype or '0')
 
 iRcTypeControl = RcTypeControl()

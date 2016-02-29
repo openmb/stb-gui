@@ -445,6 +445,15 @@ msgstr "9"
 msgid ": %s"
 msgstr ": %s"
 
+msgid "5 minutes"
+msgstr "5 минут"
+
+msgid "30 minutes"
+msgstr "30 минут"
+
+msgid "60 minutes"
+msgstr "60 минут"
+
 msgid "<Current movielist location>"
 msgstr "<Текущее место списка видео>"
 
@@ -3309,7 +3318,7 @@ msgid "Listen to the radio..."
 msgstr "Прослушивание радио..."
 
 msgid "Lists reloaded!"
-msgstr "Списки перезагружены!"
+msgstr "Список перезагружен!"
 
 msgid "Lithuanian"
 msgstr "Литовский"
@@ -4249,6 +4258,25 @@ msgstr "Пожалуйста, настройте тюнер C"
 msgid "Please set up tuner D"
 msgstr "Пожалуйста, настройте тюнер D"
 
+msgid "Please set up tuner E"
+msgstr "Пожалуйста, настройте тюнер E"
+
+msgid "Please set up tuner F"
+msgstr "Пожалуйста, настройте тюнер F"
+
+msgid "Please set up tuner G"
+msgstr "Пожалуйста, настройте тюнер G"
+
+msgid "Please set up tuner H"
+msgstr "Пожалуйста, настройте тюнер H"
+
+msgid "Please set up tuner I"
+msgstr "Пожалуйста, настройте тюнер I"
+
+msgid "Please set up tuner J"
+msgstr "Пожалуйста, настройте тюнер J"
+
+
 msgid ""
 "Please use direction keys to move the PiP window.\n"
 "Press Bouquet +/- to resize the window.\n"
@@ -4674,7 +4702,7 @@ msgid "Reload"
 msgstr "Обновить"
 
 msgid "Reload blacklists"
-msgstr "Обновить черные списки"
+msgstr "Обновить черный список"
 
 msgid "Reloading bouquets and services..."
 msgstr "Обновление букетов и сервисов..."
@@ -4795,7 +4823,7 @@ msgid "Restart"
 msgstr "Перезагрузка"
 
 msgid "Restart GUI now?"
-msgstr "Рестарт GUI сейчас?"
+msgstr "Рестарт GUI..."
 
 msgid "Restart enigma"
 msgstr "Рестарт GUI"
@@ -9520,7 +9548,7 @@ msgstr "Меню дополнений"
 msgid "Events info menu"
 msgstr "Меню информации событий"
 
-msgid "Set default settings"
+msgid "Set default settings?"
 msgstr "Установить настройки по дефолту?"
 
 msgid "Always include ECM in recordings"
@@ -9534,3 +9562,73 @@ msgstr "Всегда включать сообщения ECM в записи. Э
 
 msgid "Never decrypt while recording"
 msgstr "Никогда не декодировать во время записи"
+
+msgid "All services provider"
+msgstr "Все сервисы провайдера"
+
+msgid "CI slot: "
+msgstr "Слот CI: "
+
+msgid "execute cuts (requires MovieCut plugin)"
+msgstr "выполнить сокращения (необходим плагин MovieCut)"
+
+msgid "enable intro screen"
+msgstr "включить окно помощи"
+
+msgid "disable intro screen"
+msgstr "выключить окно помощи"
+
+msgid "service is in bouquet parental protection"
+msgstr "сервис находится в букете родительского контроля"
+
+msgid "Streaming clients info"
+msgstr "Информация о клиентах стриминга"
+
+msgid "Transcoding: "
+msgstr "Транскодирование: "
+
+msgid "Total clients streaming: %d (%s)"
+msgstr "Всего клиентов стриминга: %d (%s)"
+
+msgid ": 0000 - default (disabled)"
+msgstr ": 0000 - по умолчанию (отключено)"
+
+msgid "Enable fallback remote receiver for recordings"
+msgstr "Включить запасной удаленный ресивер для записей"
+
+msgid "Enable remote enigma2 receiver to be tried to tune into services that cannot be tuned into locally for recordings (e.g. tuner is occupied or service type is unavailable on the local tuner. Specify complete URL including http:// and port number (normally ...:8001), e.g. http://second_box:8001."
+msgstr "Разрешить удаленный ресивер на enigma2, который попытается запустить стрим этого сервиса, если локальный тюнер занят для записи.Укажите полный URL, включая http:// и номер порта (обычно ...:8001), пример: http://айпи_удаленного_ресивера:8001."
+
+msgid "FBC Unicable"
+msgstr "FBC технология (Unicable)"
+
+msgid "FBC automatic loop through"
+msgstr "FBC - автоматический петлевой вход"
+
+msgid ""
+"FBC automatic loop through\n"
+"inactive"
+msgstr ""
+"FBC - автоматический петлевой вход\n"
+"неактивен"
+
+msgid ""
+"FBC automatic loop through\n"
+"linked to %s"
+msgstr ""
+"FBC - автоматический петлевой вход\n"
+"подключен к %s"
+
+msgid "Set PIN"
+msgstr "Установить PIN-код"
+
+msgid "You PIN code is 0000. This is the default PIN code and it disable parental control!\n"
+msgstr "Ваш PIN-код сейчас 0000. Это код по умолчанию и отключение родительского контроля!\n"
+
+msgid "Zgemma H.S/H.2S/H.2H"
+msgstr "Zgemma H.S/H.2S/H.2H"
+
+msgid "No stream clients"
+msgstr "Нет клиентов стрима"
+
+ 
