@@ -52,10 +52,11 @@ class ChoiceBox(Screen):
 						new_keys.append(not x.isdigit() and x or "")
 				self.__keys = new_keys
 		for x in list:
-			self.list.append(ChoiceEntryComponent(key = len(x) > 2 and x[2] or str(self.__keys[pos]), text = x))
+			strpos = str(self.__keys[pos])
+			self.list.append(ChoiceEntryComponent(key = strpos, text = x))
 			if self.__keys[pos] != "":
-				self.keymap[len(x) > 2 and x[2] or self.__keys[pos]] = list[pos]
-			self.summarylist.append((len(x) > 2 and x[2] or self.__keys[pos],x[0]))
+				self.keymap[self.__keys[pos]] = list[pos]
+			self.summarylist.append((self.__keys[pos],x[0]))
 			pos += 1
 		self["list"] = ChoiceList(list = self.list, selection = selection)
 		self["summary_list"] = StaticText()
