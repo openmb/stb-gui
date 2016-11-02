@@ -36,7 +36,7 @@ from Screens.RdsDisplay import RassInteractive
 from ServiceReference import ServiceReference
 from Tools.BoundFunction import boundFunction
 from Tools import Notifications
-from Tools.Alternatives import CompareWithAlternatives
+from Tools.Alternatives import CompareWithAlternatives, GetWithAlternative
 from Tools.Directories import fileExists
 from Plugins.Plugin import PluginDescriptor
 from Components.PluginComponent import plugins
@@ -46,7 +46,8 @@ import os, unicodedata
 profile("ChannelSelection.py after imports")
 
 FLAG_SERVICE_NEW_FOUND = 64
-FLAG_IS_DEDICATED_3D = 128 #define in lib/dvb/idvb.h as dxNewFound = 64 and dxIsDedicated3D = 128
+FLAG_IS_DEDICATED_3D = 128
+FLAG_HIDE_VBI = 512 #define in lib/dvb/idvb.h as dxNewFound = 64 and dxIsDedicated3D = 128
 
 class BouquetSelector(Screen):
 	def __init__(self, session, bouquets, selectedFunc, enableWrapAround=True):
@@ -149,7 +150,7 @@ class ChannelContextMenu(Screen):
 		from Components.ParentalControl import parentalControl
 		self.parentalControl = parentalControl
 		self.parentalControlEnabled = config.ParentalControl.servicepin[0].value and config.ParentalControl.servicepinactive.value
-		if not (current_sel_path or current_sel_flags & (eServiceReference.isDirectory|eServiceReference.isMarker)):
+		if not (current_sel_path or current_sel_flags & (eServiceReference.isDirectory|eServiceReference.isMarker)) or current_sel_flags & eServiceReference.isGroup:
 			append_when_current_valid(current, menu, (_("show transponder info"), self.showServiceInformations), level=2)
 		if csel.bouquet_mark_edit == OFF and not csel.entry_marked:
 			if not inBouquetRootList:
@@ -176,6 +177,11 @@ class ChannelContextMenu(Screen):
 							append_when_current_valid(current, menu, (_("Unmark service as dedicated 3D service"), self.removeDedicated3DFlag), level=0)
 						else:
 							append_when_current_valid(current, menu, (_("Mark service as dedicated 3D service"), self.addDedicated3DFlag), level=0)
+					if not (current_sel_path):
+						if eDVBDB.getInstance().getFlag(eServiceReference(current.toString())) & FLAG_HIDE_VBI:
+							append_when_current_valid(current, menu, (_("Uncover dashed flickering line for this service"), self.removeHideVBIFlag), level=0)
+						else:
+							append_when_current_valid(current, menu, (_("Cover dashed flickering line for this service"), self.addHideVBIFlag), level=0)
 					if haveBouquets:
 						bouquets = self.csel.getBouquetList()
 						if bouquets is None:
@@ -273,7 +279,8 @@ class ChannelContextMenu(Screen):
 		self["menu"] = ChoiceList(menu)
 
 	def set3DMode(self, value):
-		if config.plugins.OSD3DSetup.mode.value == "auto" and self.session.nav.currentlyPlayingServiceReference == self.csel.getCurrentSelection():
+		playingref = self.session.nav.getCurrentlyPlayingServiceReference()
+		if config.plugins.OSD3DSetup.mode.value == "auto" and (playingref and playingref == self.csel.getCurrentSelection()):
 			from Plugins.SystemPlugins.OSD3DSetup.plugin import applySettings
 			applySettings(value and "sidebyside" or config.plugins.OSD3DSetup.mode.value)
 
@@ -287,6 +294,18 @@ class ChannelContextMenu(Screen):
 		eDVBDB.getInstance().removeFlag(eServiceReference(self.csel.getCurrentSelection().toString()), FLAG_IS_DEDICATED_3D)
 		eDVBDB.getInstance().reloadBouquets()
 		self.set3DMode(False)
+		self.close()
+
+	def addHideVBIFlag(self):
+		eDVBDB.getInstance().addFlag(eServiceReference(self.csel.getCurrentSelection().toString()), FLAG_HIDE_VBI)
+		eDVBDB.getInstance().reloadBouquets()
+		Screens.InfoBar.InfoBar.instance.showHideVBI()
+		self.close()
+
+	def removeHideVBIFlag(self):
+		eDVBDB.getInstance().removeFlag(eServiceReference(self.csel.getCurrentSelection().toString()), FLAG_HIDE_VBI)
+		eDVBDB.getInstance().reloadBouquets()
+		Screens.InfoBar.InfoBar.instance.showHideVBI()
 		self.close()
 
 	def isProtected(self):
@@ -390,7 +409,15 @@ class ChannelContextMenu(Screen):
 		self.close(False)
 
 	def showServiceInformations(self):
-		self.session.open( ServiceInfo, self.csel.getCurrentSelection() )
+		current = self.csel.getCurrentSelection()
+		if current.flags & eServiceReference.isGroup:
+			playingref = self.session.nav.getCurrentlyPlayingServiceOrGroup()
+			if playingref and playingref == current:
+				current = self.session.nav.getCurrentlyPlayingServiceReference()
+			else:
+				current = eServiceReference(GetWithAlternative(current.toString()))
+		self.session.open(ServiceInfo, current)
+		self.close()
 
 	def setStartupService(self):
 		self.session.openWithCallback(self.setStartupServiceCallback, MessageBox, _("Set startup service"), list = [(_("Only on startup"), "startup"), (_("Also on standby"), "standby")])
@@ -628,7 +655,6 @@ class ChannelSelectionEPG(InfoBarHotkey):
 		self["ChannelSelectEPGActions"] = hotkeyActionMap(["ChannelSelectEPGActions"], dict((x[1], self.hotkeyGlobal) for x in self.hotkeys))
 		self.eventViewEPG = self.start_bouquet = self.epg_bouquet = None
 		self.currentSavedPath = []
-		self.onExecBegin.append(self.clearLongkeyPressed)
 
 	def getKeyFunctions(self, key):
 		selection = eval("config.misc.hotkey." + key + ".value.split(',')")
@@ -1372,7 +1398,7 @@ class ChannelSelectionBase(Screen):
 
 	def getServiceName(self, ref):
 		str = self.removeModeStr(ServiceReference(ref).getServiceName())
-		if 'User - bouquets' in str:
+		if 'bouquets' in str.lower():
 			return _("User - bouquets")
 		if not str:
 			pathstr = ref.getPath()
@@ -2474,7 +2500,8 @@ class SimpleChannelSelection(ChannelSelectionBase, SelectionEventInfo):
 				"keyTV": self.setModeTv,
 			})
 		self.bouquet_mark_edit = OFF
-		self.title = title
+		if isinstance(title, str):
+			self.maintitle = title
 		self.currentBouquet = currentBouquet
 		self.returnBouquet = returnBouquet
 		self.setService = setService

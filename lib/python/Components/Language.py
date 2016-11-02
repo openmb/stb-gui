@@ -8,6 +8,8 @@ from Tools.Directories import SCOPE_LANGUAGE, resolveFilename
 class Language:
 	def __init__(self):
 		gettext.install('enigma2', resolveFilename(SCOPE_LANGUAGE, ""), unicode=0, codeset="utf-8")
+		gettext.bindtextdomain("enigma2", resolveFilename(SCOPE_LANGUAGE))
+		gettext.textdomain("enigma2")
 		self.activeLanguage = 0
 		self.catalog = None
 		self.lang = {}
@@ -22,6 +24,8 @@ class Language:
 		self.addLanguage("Deutsch",     "de", "DE", "ISO-8859-15")
 		self.addLanguage("Ελληνικά",    "el", "GR", "ISO-8859-7")
 		self.addLanguage("English",     "en", "EN", "ISO-8859-15")
+		self.addLanguage("SChinese", 	"zh", "CN", "UTF-8")
+		self.addLanguage("TChinese", 	"hk", "HK", "UTF-8")
 		self.addLanguage("Español",     "es", "ES", "ISO-8859-15")
 		self.addLanguage("Eesti",       "et", "EE", "ISO-8859-15")
 		self.addLanguage("Persian",     "fa", "IR", "ISO-8859-15")

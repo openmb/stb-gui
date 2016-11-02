@@ -491,7 +491,7 @@ void *eDVBUsbAdapter::vtunerPump()
 		unsigned char pad[64]; /* nobody knows the much data the driver will try to copy into our struct, add some padding to be sure */
 	};
 
-#define DEMUX_BUFFER_SIZE (8 * ((188 / 4) * 4096)) /* 1.5MB */
+#define DEMUX_BUFFER_SIZE (16 * 1024 * 188 ) /* 3 MB */
 	ioctl(demuxFd, DMX_SET_BUFFER_SIZE, DEMUX_BUFFER_SIZE);
 
 	while (running)
@@ -1205,6 +1205,7 @@ RESULT eDVBResourceManager::allocatePVRChannel(const eDVBChannelID &channelid, e
 		 * (allowing e.g. epgcache to be started)
 		 */
 		ePtr<iDVBFrontendParameters> feparm;
+		if (m_list) m_list->getChannelFrontendData(channelid, feparm);
 		ch->setChannel(channelid, feparm);
 	}
 	channel = ch;
@@ -1308,6 +1309,8 @@ int tuner_type_channel_default(ePtr<iDVBChannelList> &channellist, const eDVBCha
 						return 40000;
 					case iDVBFrontend::feTerrestrial:
 						return 30000;
+					case iDVBFrontend::feATSC:
+						return 20000;
 					default:
 						break;
 				}
@@ -1950,6 +1953,8 @@ RESULT eDVBChannel::setChannel(const eDVBChannelID &channelid, ePtr<iDVBFrontend
 	m_channel_id = channelid;
 	m_mgr->addChannel(channelid, this);
 
+	m_current_frontend_parameters = feparm;
+
 	if (!m_frontend)
 	{
 		/* no frontend, no need to tune (must be a streamed service) */
@@ -1960,7 +1965,6 @@ RESULT eDVBChannel::setChannel(const eDVBChannelID &channelid, ePtr<iDVBFrontend
 			/* if tuning fails, shutdown the channel immediately. */
 	int res;
 	res = m_frontend->get().tune(*feparm);
-	m_current_frontend_parameters = feparm;
 
 	if (res)
 	{

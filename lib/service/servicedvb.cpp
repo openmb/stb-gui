@@ -261,6 +261,7 @@ int eStaticServiceDVBBouquetInformation::isPlayable(const eServiceReference &ref
 							tmp = prio_map[prio_order][2];
 							break;
 						case iDVBFrontend::feCable:
+						case iDVBFrontend::feATSC:
 							tmp = prio_map[prio_order][1];
 							break;
 						default:
@@ -1184,15 +1185,7 @@ void eDVBServicePlay::serviceEvent(int event)
 			if (!m_service_handler.getDataDemux(m_demux))
 			{
 				eServiceReferenceDVB &ref = (eServiceReferenceDVB&) m_reference;
-				int sid = ref.getParentServiceID().get();
-				if (!sid)
-					sid = ref.getServiceID().get();
-
-				if ( ref.getParentTransportStreamID().get() &&
-					ref.getParentTransportStreamID() != ref.getTransportStreamID() )
-					m_event_handler.startOther(m_demux, sid);
-				else
-					m_event_handler.start(m_demux, sid);
+				m_event_handler.start(m_demux, ref);
 			}
 		}
 		m_event((iPlayableService*)this, evTunedIn);
@@ -1935,6 +1928,7 @@ int eDVBServicePlay::getInfo(int w)
 	}
 	case sIsCrypted: if (no_program_info) return false; return program.isCrypted();
 	case sIsDedicated3D: if (m_dvb_service) return m_dvb_service->isDedicated3D(); return false;
+	case sHideVBI: if (m_dvb_service) return m_dvb_service->doHideVBI(); return false;
 	case sVideoPID:
 		if (m_dvb_service)
 		{

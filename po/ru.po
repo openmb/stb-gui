@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-08-23 18:46+0300\n"
-"PO-Revision-Date: 2016-07-09 19:40+0300\n"
+"PO-Revision-Date: 2016-09-16 19:59+0300\n"
 "Last-Translator: Dimitrij <Dima-73@inbox.lv>\n"
 "Language-Team: openPLi Dimitrij\n"
 "Language: ru\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 1.8.4\n"
+"X-Generator: Poedit 1.8.9\n"
 
 msgid ""
 "\n"
@@ -53,7 +53,7 @@ msgid ""
 "Online update of your receiver software."
 msgstr ""
 "\n"
-"Онлайн обновление софта Вашего ресивера."
+"Онлайн обновление ПО Вашего ресивера."
 
 msgid ""
 "\n"
@@ -1337,6 +1337,9 @@ msgstr "Настройка разрешения для изображений"
 msgid "Configuration mode"
 msgstr "Режим конфигурации"
 
+msgid "ATSC provider"
+msgstr "Провайдер ATSC"
+
 #, python-format
 msgid "Configuration mode: %s"
 msgstr "Режим конфигурации: %s"
@@ -2337,7 +2340,7 @@ msgid "Enable auto cable scan"
 msgstr "Включить кабельное автосканирование"
 
 msgid "Enable auto fast scan"
-msgstr "Включить быстрое автосканирование"
+msgstr "Включить автосканирование"
 
 msgid "Enable bouquet selection in multi-EPG"
 msgstr "Включить выбор букетов при запуске мульти-EPG"
@@ -2556,8 +2559,8 @@ msgstr "Дополнительные настройки мотора"
 msgid "Extra start time to ignore inactivity sleeptimer"
 msgstr "Начало экстра периода времени игнорирования"
 
-msgid "F1/F3"
-msgstr "F1/F3"
+msgid "F1/F3/F4"
+msgstr "F1/F3/F4"
 
 msgid "FEC"
 msgstr "FEC"
@@ -2695,8 +2698,8 @@ msgid "From :"
 msgstr "От :"
 
 #, python-format
-msgid "Frontprocessor version: %d"
-msgstr "Версия фронтпроцессора: %d"
+msgid "Frontprocessor version: %s"
+msgstr "Версия фронтпроцессора: %s"
 
 msgid "Full transparency"
 msgstr "Полная прозрачность"
@@ -2831,12 +2834,6 @@ msgstr "Интервал защиты"
 msgid "HD list"
 msgstr "HD лист"
 
-msgid "HD1100/et7x00/et8500"
-msgstr "HD1100/et7x00/et8500"
-
-msgid "HD2400"
-msgstr "HD2400"
-
 msgid "HDMI-CEC setup"
 msgstr "Настройки HDMI-CEC"
 
@@ -2872,6 +2869,9 @@ msgstr "Помощь в настройке Вашей антенны"
 
 msgid "Hidden network"
 msgstr "Скрытая сеть"
+
+msgid "HD1100/HD1200/HD1265/et7x00/et8500/et7000mini"
+msgstr "HD1100/HD1200/HD1265/et7x00/et8500/et7000mini"
 
 msgid "Hide CI messages"
 msgstr "Спрятать сообщения от CI"
@@ -3022,6 +3022,24 @@ msgstr "Выделен номер:"
 msgid "Info"
 msgstr "Инфо"
 
+msgid "INFO"
+msgstr "ИНФО"
+
+msgid "ATSC"
+msgstr "ATSC"
+
+msgid "DVB-C ANNEX B"
+msgstr "DVB-C ANNEX B"
+
+msgid "Leave message"
+msgstr "Закрыть сообщение"
+
+msgid "DVB CI Delay"
+msgstr "Задержка DVB CI"
+
+msgid "Toggle dashed flickering line for this service"
+msgstr "Показать/скрыть мигающую строку для этого сервиса"
+
 msgid "Info bar"
 msgstr "Инфобар"
 
@@ -3116,7 +3134,7 @@ msgid "Installing"
 msgstr "Инсталляция"
 
 msgid "Installing software..."
-msgstr "Инсталляция софта..."
+msgstr "Инсталляция ПО..."
 
 msgid "Instant record"
 msgstr "Меню немедленной записи"
@@ -3979,7 +3997,7 @@ msgid "Output"
 msgstr "Выход"
 
 msgid "Overwrite configuration files during software upgrade?"
-msgstr "Перезаписать файлы конфигурации во время обновления софта?"
+msgstr "Переписывать файлы конфигурации во время обновления ПО?"
 
 msgid "Overwrite configuration files?"
 msgstr "Переписать файлы конфигурации?"
@@ -4072,7 +4090,7 @@ msgstr "Настройки PiP"
 msgid "Picon"
 msgstr "Пикон"
 
-msgid "Picon and service name"
+msgid "Picon and servicename"
 msgstr "Пикон и название сервиса"
 
 msgid "Picture player"
@@ -4536,7 +4554,7 @@ msgid "Protect services"
 msgstr "Защита сервисы"
 
 msgid "Protect software update screen"
-msgstr "Защита меню обновления софта"
+msgstr "Защита меню обновления ПО"
 
 msgid "Protect standby menu"
 msgstr "Защита меню выключения"
@@ -5704,22 +5722,22 @@ msgid "Softcam type"
 msgstr "Тип эмулятора"
 
 msgid "Software"
-msgstr "Софт"
+msgstr "ПО"
 
 msgid "Software management"
-msgstr "Менеджер управления софтом"
+msgstr "Менеджер управления ПО"
 
 msgid "Software manager setup"
-msgstr "Настройки менеджера софта"
+msgstr "Настройки менеджера ПО"
 
 msgid "Software restore"
-msgstr "Восстановление софта"
+msgstr "Восстановление ПО"
 
 msgid "Software update"
-msgstr "Обновление софта"
+msgstr "Обновление ПО"
 
 msgid "Softwaremanager information"
-msgstr "Информация менеджера софта"
+msgstr "Информация менеджера ПО"
 
 msgid "Some plugins are not available:\n"
 msgstr "Некоторые плагины недоступны:\n"
@@ -6119,9 +6137,8 @@ msgstr "Сбой синхронизации,возврат к оригиналу
 msgid "System"
 msgstr "Система"
 
-#. TRANSLATORS: Add here whatever should be shown in the "translator" about screen, up to 6 lines (use \n for newline)
 msgid "TRANSLATOR_INFO"
-msgstr "Dimitrij <dima-73@inbox.lv>"
+msgstr "Дмитрий Яцухно, Латвия, Лиепая"
 
 msgid "TS file is too large for ISO9660 level 1!"
 msgstr "TS файл слишком большой для ISO9660 level 1!"
@@ -6193,13 +6210,15 @@ msgid "The DVD standard doesn't support H.264 (HDTV) video streams. Do you want 
 msgstr "DVD стандарт не поддерживает H.264 (HDTV) видео потоков. Вы хотите создать специальный формат DVD (который возможно не будет проигрываться в стационарных DVD проигрывателях)?"
 
 msgid ""
-"The OpenPLi team would like to point out that upgrading to the latest nightly build comes not only with the latest features, but also with some risks. After the update, it is possible that your device no longer works as expected. We recommend you create backups with Autobackup or Backupsuite. This allows you to quickly and easily restore your device to its previous state, should you experience any problems. If you encounter a 'bug', please report the issue on www.openpli.org.\n"
+"The OpenPLi team would like to point out that upgrading to the latest nightly build comes not only with the latest features, but also with some risks. After the update, it is possible that your device no longer works as expected. We recommend you create backups with Autobackup or Backupsuite. This allows you to quickly and easily restore your device to its previous state, should you experience any problems. If you encounter a 'bug', please report the issue on "
+"www.openpli.org.\n"
 "\n"
 "Do you understand this?"
 msgstr ""
-"Команда OpenPLi хотел бы отметить, что обновление до самой последней ночной сборки приходит не только с новейшими функциями, но и с некоторым риском. После обновления, не исключено, что Ваш ресивер больше не будет работает так, как ожидалось. Мы рекомендуем создавать резервные копии с помощью плагинов Autobackup или Backupsuite. Это позволяет быстро и легко восстановить ресивер к своему предыдущему состоянию, если Вы испытываете проблемы. Если Вы столкнулись с 'багом', пожалуйста, сообщите о проблеме на www.openpli.org.\n"
+"Команда OpenPLi хотела бы отметить, что обновление до последней ночной сборки приходит не только с последними функциями, но и с некоторыми рисками. После обновления, не исключено, что Ваше устройство больше не работает, так как ожидалось. Мы рекомендуем создавать резервные копии с помощью плагинов 'Autobackup, Backupsuite, Automatic Full Backup'. Это позволяет быстро и легко восстановить устройство в исходное состояние, если у Вас возникли какие-либо проблемы. "
+"Если Вы столкнулись с 'ошибкой', сообщите нам об этом на www.openpli.org.\n"
 "\n"
-"Вам это понятно?"
+"Вам понятно это предупреждение?"
 
 msgid "The PIN code has been changed successfully."
 msgstr "PIN-код был успешно изменен."
@@ -6281,7 +6300,7 @@ msgid ""
 "The software management extension is not installed!\n"
 "Please install it."
 msgstr ""
-"Плагин менеджера дополнений софта не установлен!\n"
+"Плагин менеджера дополнений ПО не установлен!\n"
 "Пожалуйста, установите его."
 
 #, python-format
@@ -6352,8 +6371,8 @@ msgstr "Этот DVD RW контент уже отформатирован - п�
 
 msgid ""
 "This info is for developers only.\n"
-"For a normal users it is not important.\n"
-"Don't panic, please, when here will be displayed any suspicious informations!"
+"For a normal users it is not relevant.\n"
+"Don't panic please when you see values being displayed that you think look suspicious!"
 msgstr ""
 "Эта информация только для разработчиков.\n"
 "Для простых пользователей это не важно.\n"
@@ -6586,7 +6605,7 @@ msgid "Toneburst A/B"
 msgstr "Тоновый импульс (Tone Burst) A/B"
 
 msgid "Top and bottom"
-msgstr "Верх и низ"
+msgstr "Сверху и снизу"
 
 msgid "Track"
 msgstr "Дорожка"
@@ -6734,7 +6753,7 @@ msgid "Unicable LNB"
 msgstr "LNB технология(Unicable)"
 
 msgid "Unicable Martix"
-msgstr "Технология (Unicable Martix)"
+msgstr "Технология (Unicable Matrix)"
 
 msgid "Uninstall"
 msgstr "Удалить"
@@ -6786,7 +6805,7 @@ msgid "Updatefeed not available."
 msgstr "Обновления с фида не доступны."
 
 msgid "Updating software catalog"
-msgstr "Обновление каталога софта"
+msgstr "Обновление каталога ПО"
 
 msgid "Upgrading"
 msgstr "Обновление"
@@ -7018,7 +7037,7 @@ msgid "View list of available skins"
 msgstr "Просмотр списка доступных скинов"
 
 msgid "View list of available software extensions"
-msgstr "Просмотр списка доступных софтовых дополнений"
+msgstr "Просмотр списка доступных дополнений ПО"
 
 msgid "View list of available system extensions"
 msgstr "Просмотр списока доступных системных дополнений"
@@ -7033,6 +7052,9 @@ msgid "View video CD..."
 msgstr "Просмотр CD видео..."
 
 msgid "Virtual keyboard"
+msgstr "Виртуальная клавиатура"
+
+msgid "Virtual Keyboard"
 msgstr "Виртуальная клавиатура"
 
 msgid "Voltage mode"
@@ -7697,7 +7719,7 @@ msgid "abort favourites edit"
 msgstr "прервать редактирование фаворитов"
 
 msgid "about to start"
-msgstr "скоро начнется"
+msgstr "стартует"
 
 msgid "activate network adapter configuration"
 msgstr "активировать конфигурацию сетевого адаптера"
@@ -8491,10 +8513,10 @@ msgid "show mediaplayer on mainmenu"
 msgstr "показать медиаплеер в главном меню"
 
 msgid "show softwaremanager in setup menu"
-msgstr "показать менеджер софта в меню настроек"
+msgstr "показать менеджер ПО в меню настроек"
 
 msgid "show softwaremanager on blue button"
-msgstr "показать менеджер софта в меню дополнений"
+msgstr "показать менеджер ПО в меню дополнений"
 
 msgid "show transponder info"
 msgstr "показать инфо транспондера"
@@ -9316,6 +9338,12 @@ msgstr "Приоритетный тюнер DVB-T"
 msgid "Preferred tuner DVB-C"
 msgstr "Приоритетный тюнер DVB-C"
 
+msgid "Preferred tuner ATSC"
+msgstr "Приоритетный тюнер ATSC"
+
+msgid "Preferred tuner ATSC for recordings"
+msgstr "Приоритетный тюнер ATSC для записей"
+
 msgid "Preferred tuner DVB-S for recordings"
 msgstr "Приоритетный тюнер DVB-S для записей"
 
@@ -9530,7 +9558,7 @@ msgid "Video clipping setup"
 msgstr "Настройки видео клиппинга"
 
 msgid "clip overscan / letterbox borders"
-msgstr "изменение границ видео"
+msgstr "изменение границ видео / переразвертка"
 
 msgid "EPG Selection"
 msgstr "Выбор EPG"
@@ -9727,7 +9755,7 @@ msgid "When enabled the LNB toneburst will be forced"
 msgstr "Если включено, то тоновый импульс на LNB будет выполнен принудительно"
 
 msgid "When enabled the LNB power will not be switched off in standby"
-msgstr "Если включено, то питание на LNB не будет выключено, когда тюнер находится в режиме ожидания"
+msgstr "Включение/выключение постоянной подачи питания на LNB, только для FBC тюнеров. Дефолт - питание отключено, если тюнер не в использовании."
 
 msgid "Bypass HDMI EDID checking"
 msgstr "Обход HDMI EDID проверки"
@@ -9784,4 +9812,343 @@ msgid "Protect menu sort"
 msgstr "Защита меню сортировки"
 
 msgid "Overscan wizard"
-msgstr "Мастер настройки overscan (забегание развёртки)"
+msgstr "Мастер настройки переразвертки"
+
+msgid "Toggle TV/RADIO mode"
+msgstr "Переключатель ТВ/РАДИО режима"
+
+msgid "Toggle the tv and the radio player..."
+msgstr "Переключение между тв и радио плеером..."
+
+msgid "Show menu paths"
+msgstr "Показывать путь к меню"
+
+msgid "This option allows you to show menu paths."
+msgstr "Эта опция позволяет показать путь к меню."
+
+msgid "Small"
+msgstr "Маленький"
+
+msgid "Large"
+msgstr "Большой"
+
+msgid "Do you want to autorestore settings?"
+msgstr "Вы хотите автоматически восстановить настройки?"
+
+msgid "Network Info:"
+msgstr "Информация о сети:"
+
+msgid "Did you see all eight arrow heads?"
+msgstr "Вы видели все восемь наконечников стрелок?"
+
+msgid "Wizard to arrange the overscan"
+msgstr "Мастер организации переразвертки"
+
+msgid "Save changes"
+msgstr "Сохранить изменения"
+
+msgid "Do you see all the eight arrowheads?"
+msgstr "Видите ли Вы все восемь наконечников стрелок?"
+
+msgid "Do you want to quit the overscan wizard?"
+msgstr "Вы хотите выйти из мастера настройки переразвертки?"
+
+msgid "Do you want to select a different skin?"
+msgstr "Вы действительно хотите выбрать другой скин?"
+
+msgid "Enable auto fast scan for %s"
+msgstr "Вкл. автосканирование для %s"
+
+msgid ""
+"It seems you did not see all the eight arrow heads. This means your TV is has overscan enabled, and is not configured properly.\n"
+"\n"
+"Please refer to your TVs manual to find how you can disable overscan on your TV. Look for terms like 'Just fit', 'Full width', etc. If you can't find it, ask other users at http://forums.openpli.org.\n"
+"\n"
+msgstr ""
+"Кажется, что Вы не можете видеть все наконечники стрелок. Это означает, что Ваш ТВ не настроен должным образом.\n"
+"\n"
+
+msgid "Reset order (All)"
+msgstr "Сброс порядка (все)"
+
+msgid ""
+"The overscan wizard has been completed.\n"
+"\n"
+"Note: you can always start the Overscan wizard later,  via\n"
+"\n"
+"menu->installation->system->Overscan wizard"
+msgstr ""
+"Мастер настройки переразвертки завершил работу.\n"
+"\n"
+"Примечание: Вы всегда можете запустить мастера переразвертки позже, с помощью\n"
+"\n"
+"меню->Настройки->Система->Мастер настройки переразвертки"
+
+msgid ""
+"The overscan wizard helps you to setup your TV in the correct way.\n"
+"\n"
+"For the majority of TV's, the factory default is to have overscan enabled. This means you are always watching a \"zoomed in\" picture instead of real HD, and parts of the user inferface (skin) may be invisible.\n"
+"\n"
+"The yellow area means a 5% border area of a full HD picture will be invisible.\n"
+"The green area means a 10% border area of a full HD picture will be invisible.\n"
+"\n"
+"In other words, if the yellow box meets all for sides of your screen, then you have at least 5% overscan on all sides.\n"
+"\n"
+"If you see the tips of all eight arrowheads, then your TV has overscan disabled.\n"
+"\n"
+"Test Pattern by TigerDave - www.tigerdave.com/ht_menu.htm"
+msgstr ""
+"Мастер переразвертки позволяет правильно настроить ТВ.\n"
+"\n"
+"Во многих ТВ переразвертка включена по дефолту. Это означает, что Вы всегда просматриваете увеличенное изображение, а не реальное HD и часть скина не видна.\n"
+"\n"
+" Желтая зона означает 5% от полного HD изображения.\n"
+"Зеленая зона означает 10% от полного HD изображения.\n"
+"\n"
+"Если Вы видите все наконечники стрелок, то overscan ТВ отключен.\n"
+"\n"
+"Тестовая картинка из TigerDave - www.tigerdave.com/ht_menu.htm"
+
+msgid "The user interface of the receiver will now restart to select the selected skin"
+msgstr "Рестарт GUI для применения выбраного скина"
+
+msgid "Toggle show/hide"
+msgstr "Переключатель показать/скрыть"
+
+msgid ""
+"You did not see all eight arrow heads. This means your TV has overscan enabled and presents you with a zoomed-in picture, causing you to loose part of a full HD screen. In addition this you may also miss parts of the user interface, for example volume bars and more.\n"
+"\n"
+"Unfortunately, your model of receiver is not capable to adjust the dimensions of the user interface. If not everything is visible, you should change the installed skin to one that supports the overscan area of your TV.\n"
+"\n"
+"When you select a different skin, the user interface of your receiver will restart.\n"
+"\n"
+"Note: you can always start the Overscan wizard later,  via\n"
+"\n"
+"menu->installation->system->Overscan wizard"
+msgstr ""
+"Вы не видите все наконечники стрелок. Это означает увеличенное изображение. Вы можете не увидеть некоторые части, например регулятор громкости.\n"
+"\n"
+"К сожалению, Ваша модель ресивера не способна регулировать размеры пользовательского интерфейса. Если не все видно, Вы должны изменить установленный скин на другой, который поддерживает переразвертку Вашего ТВ.\n"
+"\n"
+"Рестарт GUI неообходим для применения выбраного скина.\n"
+"\n"
+"Примечание: Вы всегда можете запустить мастера переразвертки позже, с помощью\n"
+"\n"
+"меню->Настройки->Система->Мастер настройки переразвертки"
+
+msgid ""
+"You did not see all eight arrow heads. This means your TV has overscan enabled and presents you with a zoomed-in picture, causing you to loose part of a full HD screen. In addition this you may also miss parts of the user interface, for example volume bars and more.\n"
+"\n"
+"You can now try to resize and change the position of the user interface until you see the eight arrow heads.\n"
+"\n"
+"When done press OK.\n"
+"\n"
+msgstr ""
+"Если Вы не видите все наконечники стрелок, то это означает увеличенное изображение. Вы можете не увидеть некоторые части, например регулятор громкости.\n"
+"\n"
+"Вы можете попытаться изменить размер дизайна до тех пор, пока не увидите все наконечники стрелок полностью.\n"
+"\n"
+"Когда Вы закончите, нажмите кнопку ОК.\n"
+"\n"
+
+msgid "bottom"
+msgstr "снизу"
+
+msgid "hide"
+msgstr "скрыть"
+
+msgid "show"
+msgstr "показать"
+
+msgid "multi"
+msgstr "мульти"
+
+msgid "Set blocktimes by weekday"
+msgstr "Установка время игнорирования по дням"
+
+msgid "Specify if you want to set the blocktimes separately by weekday"
+msgstr "Период времени игнорирования таймера неактивности для каждого дня недели"
+
+msgid "HDMI Colorspace"
+msgstr "Цветовая модель HDMI"
+
+msgid "rgb"
+msgstr "rgb"
+
+msgid "This option allows you can config the Colorspace from Auto to RGB"
+msgstr "Этот параметр позволяет установить режим цветовой модели HDMI - от авто до RGB"
+
+msgid "420"
+msgstr "420"
+
+msgid "422"
+msgstr "422"
+
+msgid "444"
+msgstr "444"
+
+msgid "November"
+msgstr "Ноября"
+
+msgid "January"
+msgstr "Января"
+
+msgid "February"
+msgstr "Февраля"
+
+msgid "March"
+msgstr "Марта"
+
+msgid "April"
+msgstr "Апреля"
+
+msgid "May"
+msgstr "Мая"
+
+msgid "June"
+msgstr "Июня"
+
+msgid "July"
+msgstr "Июля"
+
+msgid "August"
+msgstr "Августа"
+
+msgid "September"
+msgstr "Сентября"
+
+msgid "October"
+msgstr "Октября"
+
+msgid "December"
+msgstr "Декабря"
+
+msgid "Config Scan Details"
+msgstr "Детали конфига сканирования"
+
+msgid "Auto Diseqc"
+msgstr "Авто Diseqc"
+
+msgid "Cover dashed flickering line for this service"
+msgstr "скрыть мигающую строку для этого сервиса"
+
+msgid "Uncover dashed flickering line for this service"
+msgstr "показать мигающую строку для этого сервиса"
+
+msgid "Multichannel PCM"
+msgstr "Мультиканал PCM"
+
+msgid "Simplified Chinese"
+msgstr "Упрощенный китайский"
+
+msgid "Traditional Chinese"
+msgstr "Традиционный китайский"
+
+msgid "Channel Selection"
+msgstr "Выбор каналов"
+
+msgid "Bitrate viewer"
+msgstr "Просмотр битрейта"
+
+msgid "Lets you view the bitrate"
+msgstr "Аудио/видео битрейт сервиса"
+
+msgid "PowerMenu"
+msgstr "Меню выключения"
+
+msgid "embedded"
+msgstr "встроенные"
+
+msgid "SSA file"
+msgstr "SSA файл"
+
+msgid "VOB file"
+msgstr "VOB файл"
+
+msgid "SRT fails"
+msgstr "SRT файл"
+
+msgid "PGS fails"
+msgstr "PGS файл"
+
+msgid "ASS file"
+msgstr "ASS файл"
+
+msgid "off or wpa2 on"
+msgstr "выкл. или wpa2 вкл."
+
+msgid "Symbolrate:"
+msgstr "Скорость потока:"
+
+msgid "Servicename"
+msgstr "Название сервиса"
+
+msgid "Channelnumber and servicename"
+msgstr "Номер канала и название сервиса"
+
+msgid "Channelnumber, picon and servicename"
+msgstr "Номер канала, пикон и название сервиса"
+
+msgid "Channelnumber and picon"
+msgstr "Номер канала и пикон"
+
+msgid "Configure whether multi channel PCM sound should be enabled."
+msgstr "Настройка, нужно ли включать мультиканальный звук PCM."
+
+msgid "A recording is currently running on the selected tuner. Please select a different tuner or consider to stop the recording to try again."
+msgstr "В текущее время идет запись. Пожалуйста, выберите другой тюнер такого же типа или остановите запись перед попыткой сканирования."
+
+msgid " (0 - all networks)"
+msgstr " (0 - все сети)"
+
+msgid "Code R. LP-HP & Guard Int"
+msgstr "Код R. LP-HP & Guard Int."
+
+msgid "Constellation & FFT mode"
+msgstr "Модуляция & FFT режим"
+
+msgid "Frequency & Channel"
+msgstr "Частота & Канал"
+
+msgid "Frequency & Polarization"
+msgstr "Частота & Поляризация"
+
+msgid "Inversion & Bandwidth"
+msgstr "Инверсия & Пропускная способность"
+
+msgid "Inversion, Pilot & Roll-off"
+msgstr "Инверсия, Pilot & Roll-off"
+
+msgid "NIM & Type"
+msgstr "NIM & Тип тюнера"
+
+msgid "Service & PIDs"
+msgstr "Сервис & PIDs"
+
+msgid "Service ID"
+msgstr "ID сервиса"
+
+msgid "Service info - service & PIDs"
+msgstr "Информация - сервис & PIDs"
+
+msgid "Service info - tuner live values"
+msgstr "Информация - прямые данные тюнера"
+
+msgid "Service info - tuner setting values"
+msgstr "Информация - данные настроек тюнера"
+
+msgid "Symbol rate & FEC"
+msgstr "Скорость потока & FEC"
+
+msgid "System & Modulation"
+msgstr "Система & Модуляция"
+
+msgid "Tuner live values"
+msgstr "Тюнер - прямые данные"
+
+msgid "Tuner setting values"
+msgstr "Тюнер - данные настроек"
+
+msgid "Videocodec, size & format"
+msgstr "Видеокодек, размер & формат"
+
