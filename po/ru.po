@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-08-23 18:46+0300\n"
-"PO-Revision-Date: 2016-09-16 19:59+0300\n"
+"PO-Revision-Date: 2016-12-30 08:26+0100\n"
 "Last-Translator: Dimitrij <Dima-73@inbox.lv>\n"
 "Language-Team: openPLi Dimitrij\n"
 "Language: ru\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 msgid ""
 "\n"
@@ -10182,8 +10182,12 @@ msgstr "Показать номера в меню"
 msgid "This option allows you to show menu number quick links."
 msgstr "Эта опция позволяет показать номер меню, для быстрого перехода на него, через цифровые кнопки."
 
-msgid "GUI needs a restart to apply a new language\nDo you want to restart the GUI now?
-msgstr "Необходим рестарт GUI для полного применения нового языка.\nХотите выполнить рестарт GUI сейчас?"
+msgid ""
+"GUI needs a restart to apply a new language\n"
+"Do you want to restart the GUI now"
+msgstr ""
+"Необходим рестарт GUI для полного применения нового языка.\n"
+"Хотите выполнить рестарт GUI сейчас?"
 
 msgid "Power on display"
 msgstr "Питание на дисплее"
@@ -10196,3 +10200,5 @@ msgstr "Показать пиконы на дисплее"
 
 msgid "Configure if service picons will be shown in display (when supported by the skin)."
 msgstr "Настройка для показа пиконов сервисов на дисплее (если это поддерживается скином)."
+
+

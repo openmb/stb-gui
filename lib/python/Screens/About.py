@@ -39,6 +39,9 @@ class About(Screen):
 		elif about.getHardwareTypeString().startswith("7000"):
 		    hwname = "MB Premium Micro"
 		    AboutText = _("Hardware: ") + hwname + "\n"
+		elif about.getHardwareTypeString().startswith("7005"):
+		    hwname = "MB Premium Micro v2"
+		    AboutText = _("Hardware: ") + hwname + "\n"
 		elif about.getHardwareTypeString() == "G300":
 		    hwname = "MB Premium Twin+ PLUS HD"
 		    AboutText = _("Hardware: ") + hwname + "\n"
