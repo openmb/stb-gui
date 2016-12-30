@@ -478,7 +478,14 @@ static void gif_load(Cfilepara* filepara, bool forceRGB = false)
 	int cmaps;
 	int extcode;
 
+#if !defined(GIFLIB_MAJOR) || ( GIFLIB_MAJOR < 5)
 	gft = DGifOpenFileName(filepara->file);
+#else
+	{
+		int err;
+		gft = DGifOpenFileName(filepara->file, &err);
+	}
+#endif
 	if (gft == NULL)
 		return;
 	do
@@ -568,11 +575,25 @@ static void gif_load(Cfilepara* filepara, bool forceRGB = false)
 	}
 	while (rt != TERMINATE_RECORD_TYPE);
 
+#if !defined(GIFLIB_MAJOR) || ( GIFLIB_MAJOR < 5) || (GIFLIB_MAJOR == 5 && GIFLIB_MINOR == 0)
 	DGifCloseFile(gft);
-	return;
+#else
+	{
+		int err;
+		DGifCloseFile(gft, &err);
+	}
+#endif	return;
 ERROR_R:
 	eDebug("[ePicLoad] <Error gif>");
+#if !defined(GIFLIB_MAJOR) || ( GIFLIB_MAJOR < 5) || (GIFLIB_MAJOR == 5 && GIFLIB_MINOR == 0)
 	DGifCloseFile(gft);
+#else
+	{
+		int err;
+		DGifCloseFile(gft, &err);
+	}
+#endif
+  
 }
 
 //---------------------------------------------------------------------------------------------
