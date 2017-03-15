@@ -14,7 +14,7 @@ config.misc.installwizard.ipkgloaded = ConfigBoolean(default = False)
 config.misc.installwizard.channellistdownloaded = ConfigBoolean(default = False)
 
 #OpenMB
-from Plugins.PLi.SoftcamSetup.camcontrol import CamControl
+from Tools.camcontrol import CamControl
 
 class InstallWizard(Screen, ConfigListScreen):
 
